@@ -1,0 +1,931 @@
+﻿<Window x:Class="MovieSelector.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:cb="clr-namespace:ComboBoxUserControl"
+        xmlns:local="clr-namespace:MovieSelector"
+        Name="MovieSelectorWindow"
+        Title="Movie Catalogue Software"
+        MinWidth="800"
+        MinHeight="420"
+        Background="Black"
+        Closing="MovieSelectorWindow_Closing"
+        ContentRendered="MovieSelectorWindow_ContentRendered"
+        WindowState="Maximized"
+        WindowStyle="None">
+
+    <Window.Resources>
+        <local:PlayButtonIsEnabledConverter x:Key="PlayButtonIsEnabledConverter" />
+        <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <local:SLBIVisibilityConverter x:Key="SLBIVisibilityConverter" />
+        <local:MovieNameToRatingConverter x:Key="MovieNameToRatingConverter" />
+        <local:BoolToInvertedVisibilityConverter x:Key="BoolToInvertedVisibilityConverter" />
+        <local:ZeroToVisibilityConverter x:Key="ZeroToVisibilityConverter" />
+
+        <Style x:Key="TitleBarButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="{DynamicResource WindowTextBrush}" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter"
+                                              Margin="0"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Focusable="False"
+                                              RecognizesAccessKey="True" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource MouseOverOverlayBackgroundBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource PressedOverlayBackgroundBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TitleBarCloseButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter"
+                                              Margin="0"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Focusable="False"
+                                              RecognizesAccessKey="True" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource MouseOverWindowCloseButtonBackgroundBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource MouseOverWindowCloseButtonForegroundBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource PressedWindowCloseButtonBackgroundBrush}" />
+                                <Setter Property="Foreground" Value="{DynamicResource MouseOverWindowCloseButtonForegroundBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="MainListBoxStyle" TargetType="{x:Type ListBox}">
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Setter Property="ItemTemplate">
+                <Setter.Value>
+                    <DataTemplate DataType="{x:Type local:MovieListBoxClass}">
+                        <Grid Width="358"
+                              Height="180"
+                              Background="Transparent">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!--  Background  -->
+                            <Image Grid.ColumnSpan="2"
+                                   Opacity="0.3"
+                                   RenderOptions.BitmapScalingMode="HighQuality"
+                                   Source="../../Resources/GlassFrameHor.png"
+                                   Stretch="Fill" />
+
+                            <!--  Preview Image  -->
+                            <Image Margin="12" Source="{Binding previewImage}" />
+
+                            <Grid Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <Viewbox HorizontalAlignment="Left" VerticalAlignment="Top">
+                                    <TextBlock Grid.Row="0"
+                                               Width="208"
+                                               Margin="0,12,12,12"
+                                               FontSize="24"
+                                               Foreground="White"
+                                               Opacity="0.3"
+                                               Text="{Binding movieName}"
+                                               TextWrapping="Wrap" />
+                                </Viewbox>
+                                <TextBlock Grid.Row="1"
+                                           Margin="0,0,0,12"
+                                           FontSize="24"
+                                           Foreground="White"
+                                           Opacity="0.3"
+                                           Text="{Binding movieName, Converter={StaticResource MovieNameToRatingConverter}}" />
+                            </Grid>
+                        </Grid>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="listBoxItemStyle" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="Margin" Value="24,0,24,24" />
+            <Setter Property="Padding" Value="0,0,0,0" />
+            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="SLBI_PreviewMouseLeftButtonDown" />
+            <EventSetter Event="PreviewMouseRightButtonDown" Handler="SLBI_PreviewMouseRightButtonDown" />
+
+            <Setter Property="Visibility">
+                <Setter.Value>
+                    <MultiBinding Converter="{StaticResource SLBIVisibilityConverter}">
+                        <Binding ElementName="filterTB" Path="Text" />
+                        <Binding Path="movieName" />
+                        <Binding Path="genre" />
+                        <Binding Path="director" />
+                        <Binding Path="cast" />
+                    </MultiBinding>
+                </Setter.Value>
+            </Setter>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Grid>
+                            <ContentPresenter HorizontalAlignment="Stretch" />
+                            <Border x:Name="layoutLBBorder"
+                                    BorderBrush="#d4af37"
+                                    BorderThickness="3"
+                                    Visibility="Collapsed" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="layoutLBBorder" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--  Scrollbar Thumb ListBox  -->
+        <Style x:Key="ScrollBarTrackThumb" TargetType="{x:Type Thumb}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Grid x:Name="Grid">
+                            <Rectangle Width="Auto"
+                                       Height="Auto"
+                                       HorizontalAlignment="Stretch"
+                                       VerticalAlignment="Stretch"
+                                       Fill="Transparent" />
+                            <Border x:Name="CornerScrollBarRectangle"
+                                    Width="Auto"
+                                    Height="Auto"
+                                    Margin="0,1,0,1"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="5" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Tag" Value="Horizontal">
+                                <Setter TargetName="CornerScrollBarRectangle" Property="Width" Value="Auto" />
+                                <Setter TargetName="CornerScrollBarRectangle" Property="Height" Value="6" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--  Scrollbar Thumb ListBox  -->
+        <Style TargetType="{x:Type ScrollBar}">
+            <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
+            <Setter Property="Foreground" Value="#adabab" />
+            <Setter Property="Background" Value="#303840" />
+            <Setter Property="Width" Value="7" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid x:Name="GridRoot"
+                              Width="7"
+                              Background="{TemplateBinding Background}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="0.00001*" />
+                            </Grid.RowDefinitions>
+                            <Track x:Name="PART_Track"
+                                   Grid.Row="0"
+                                   Focusable="false"
+                                   IsDirectionReversed="true">
+                                <Track.Thumb>
+                                    <Thumb x:Name="Thumb"
+                                           Background="{TemplateBinding Foreground}"
+                                           Style="{DynamicResource ScrollBarTrackThumb}" />
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton x:Name="PageUp"
+                                                  Command="ScrollBar.PageDownCommand"
+                                                  Focusable="false"
+                                                  Opacity="0" />
+                                </Track.IncreaseRepeatButton>
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton x:Name="PageDown"
+                                                  Command="ScrollBar.PageUpCommand"
+                                                  Focusable="false"
+                                                  Opacity="0" />
+                                </Track.DecreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger SourceName="Thumb" Property="IsMouseOver" Value="true">
+                                <Setter TargetName="Thumb" Property="Background" Value="{DynamicResource ButtonSelectBrush}" />
+                            </Trigger>
+                            <Trigger SourceName="Thumb" Property="IsDragging" Value="true">
+                                <Setter TargetName="Thumb" Property="Background" Value="{DynamicResource DarkBrush}" />
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed" />
+                            </Trigger>
+                            <Trigger Property="Orientation" Value="Horizontal">
+                                <Setter TargetName="GridRoot" Property="LayoutTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="-90" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="PART_Track" Property="LayoutTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="-90" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Width" Value="Auto" />
+                                <Setter Property="Height" Value="8" />
+                                <Setter TargetName="Thumb" Property="Tag" Value="Horizontal" />
+                                <Setter TargetName="PageDown" Property="Command" Value="ScrollBar.PageLeftCommand" />
+                                <Setter TargetName="PageUp" Property="Command" Value="ScrollBar.PageRightCommand" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--  Seperator Border  -->
+        <Style x:Key="SeperatorBorderStyle" TargetType="{x:Type Border}">
+            <Setter Property="BorderBrush" Value="White" />
+            <Setter Property="Margin" Value="24,6,24,6" />
+            <Setter Property="BorderThickness" Value="0,1,0,0" />
+            <Setter Property="Opacity" Value="0.06" />
+        </Style>
+    </Window.Resources>
+
+    <!--  Tells Windows to treat the first 32px as a title bar  -->
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="{Binding ElementName=titleBarGrid, Path=Height}" ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />
+    </WindowChrome.WindowChrome>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!--  TITLE BAR  -->
+        <Grid Name="titleBarGrid"
+              Height="32"
+              Background="#4f637f">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="1"
+                       Margin="6,0,0,0"
+                       VerticalAlignment="Center"
+                       FontSize="14"
+                       FontWeight="SemiBold"
+                       Foreground="White"
+                       Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}, Path=Title}" />
+            <Button Grid.Column="2"
+                    Click="OnInfoButtonClick"
+                    Style="{StaticResource TitleBarButtonStyle}">
+                <Image Margin="10"
+                       RenderOptions.BitmapScalingMode="HighQuality"
+                       Source="..\Resources\Info.png"
+                       Stretch="Uniform" />
+            </Button>
+            <Button Grid.Column="3"
+                    Click="OnMinimizeButtonClick"
+                    RenderOptions.EdgeMode="Aliased"
+                    Style="{StaticResource TitleBarButtonStyle}">
+                <Path Width="46"
+                      Height="32"
+                      Data="M 18,15 H 28"
+                      Stroke="White"
+                      StrokeThickness="1" />
+            </Button>
+            <Button Name="maximizeButton"
+                    Grid.Column="4"
+                    Click="OnMaximizeRestoreButtonClick"
+                    Style="{StaticResource TitleBarButtonStyle}">
+                <Path Width="46"
+                      Height="32"
+                      Data="M 18.5,10.5 H 27.5 V 19.5 H 18.5 Z"
+                      Stroke="White"
+                      StrokeThickness="1" />
+            </Button>
+            <Button Name="restoreButton"
+                    Grid.Column="4"
+                    Click="OnMaximizeRestoreButtonClick"
+                    Style="{StaticResource TitleBarButtonStyle}">
+                <Path Width="46"
+                      Height="32"
+                      Data="M 18.5,12.5 H 25.5 V 19.5 H 18.5 Z M 20.5,12.5 V 10.5 H 27.5 V 17.5 H 25.5"
+                      Stroke="White"
+                      StrokeThickness="1" />
+            </Button>
+            <Button Grid.Column="5"
+                    Click="OnCloseButtonClick"
+                    Style="{StaticResource TitleBarCloseButtonStyle}">
+                <Path Width="46"
+                      Height="32"
+                      Data="M 18,11 27,20 M 18,20 27,11"
+                      Stroke="White"
+                      StrokeThickness="1" />
+            </Button>
+        </Grid>
+
+        <Viewbox Grid.Row="1" Stretch="Fill">
+            <Grid Name="applicationGrid"
+                  Width="1920"
+                  Height="1020">
+                <!--  Main Background  -->
+                <Image RenderOptions.BitmapScalingMode="HighQuality"
+                       Source="../../Resources/Background.png"
+                       Stretch="Fill" />
+                <Grid Background="Black" Opacity="0.24" />
+
+                <Grid Name="mainGrid">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--  Left Side  -->
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!--  Buttons  -->
+                        <Grid Height="120" Margin="24,0,24,24">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="4*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!--  Menu Icon  -->
+                            <local:ClickGrid x:Name="menuIconGrid"
+                                             Width="80"
+                                             VerticalAlignment="Stretch"
+                                             Background="#303c4a"
+                                             Click="optionBtn_Click">
+                                <Image Margin="6,0,6,0"
+                                       VerticalAlignment="Bottom"
+                                       IsHitTestVisible="False"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       Source="../../Resources/OptionIcon.png"
+                                       Stretch="Uniform" />
+                            </local:ClickGrid>
+
+                            <!--  Combo Box  -->
+                            <Grid Grid.Column="1"
+                                  Margin="24,0,0,0"
+                                  VerticalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock VerticalAlignment="Center"
+                                           FontSize="28"
+                                           Foreground="White"
+                                           Text="Sort By: " />
+                                <cb:CustomComboBox x:Name="sortByCB"
+                                                   Grid.Column="1"
+                                                   Width="300"
+                                                   Height="70"
+                                                   MaxHeight="280"
+                                                   Margin="0,0,3,0"
+                                                   HorizontalAlignment="Stretch"
+                                                   VerticalAlignment="Center"
+                                                   Background="#303c4a"
+                                                   FontSize="28"
+                                                   ListBoxPosition="BOTTOM"
+                                                   SelectionChanged="sortByCB_SelectionChanged" />
+                                <Grid Name="lockCBGrid"
+                                      Grid.ColumnSpan="2"
+                                      Background="#171d24"
+                                      Opacity="0.95"
+                                      Visibility="Hidden">
+                                    <TextBlock HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="20"
+                                               Foreground="White"
+                                               Text="No Sorting Allowed.&#x0a;Movie Re-fetching in Progress."
+                                               TextAlignment="Center" />
+                                </Grid>
+                            </Grid>
+
+                            <!--  Search Icon  -->
+                            <Grid Grid.Column="3"
+                                  Height="{Binding ElementName=sortByCB, Path=Height, Mode=OneTime}"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Center">
+                                <Border Background="#303c4a"
+                                        CornerRadius="10"
+                                        Opacity="0.7" />
+                                <TextBox x:Name="filterTB"
+                                         Padding="6,0,6,0"
+                                         HorizontalAlignment="Stretch"
+                                         VerticalContentAlignment="Center"
+                                         Background="Transparent"
+                                         BorderThickness="0"
+                                         CaretBrush="White"
+                                         FontSize="28"
+                                         Foreground="LightGray"
+                                         TextChanged="filterTB_TextChanged" />
+                                <TextBlock Margin="12,0,12,0"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center"
+                                           FontSize="28"
+                                           Foreground="White"
+                                           IsHitTestVisible="False"
+                                           Opacity="0.12"
+                                           Text="e.g. Movie Name, Genre, Cast, etc"
+                                           Visibility="{Binding ElementName=filterTB, Path=Text.Length, Converter={StaticResource ZeroToVisibilityConverter}}" />
+                                <Image Margin="16"
+                                       HorizontalAlignment="Right"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       Source="../../Resources/SearchIcon.png"
+                                       Stretch="Uniform" />
+                            </Grid>
+                        </Grid>
+
+                        <!--  List Box  -->
+                        <ListBox x:Name="movieLB"
+                                 Grid.Row="1"
+                                 Margin="0,24,24,24"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Stretch"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 IsSynchronizedWithCurrentItem="True"
+                                 IsTextSearchEnabled="True"
+                                 ItemContainerStyle="{StaticResource listBoxItemStyle}"
+                                 KeyDown="movieLB_KeyDown"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 SelectionChanged="movieLB_SelectionChanged"
+                                 Style="{StaticResource MainListBoxStyle}"
+                                 TextSearch.TextPath="movieName" />
+                    </Grid>
+
+                    <!--  Right Side Background  -->
+                    <Image Grid.Column="1"
+                           Opacity="1"
+                           RenderOptions.BitmapScalingMode="HighQuality"
+                           Source="../../Resources/GlassFrame.png"
+                           Stretch="Fill" />
+
+                    <!--  Right Side  -->
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="66" />
+                            <RowDefinition Height="44" />
+                            <RowDefinition Height="11*" />
+                            <RowDefinition Height="9*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!--  Title  -->
+                        <Viewbox Margin="12,24,12,6"
+                                 HorizontalAlignment="Left"
+                                 VerticalAlignment="Center"
+                                 Stretch="Uniform">
+                            <TextBlock x:Name="titleTextBlock"
+                                       FontWeight="Bold"
+                                       Foreground="White"
+                                       Opacity="0.7" />
+                        </Viewbox>
+
+                        <!--  Tagline  -->
+                        <Viewbox Grid.Row="1"
+                                 Margin="12,6,12,6"
+                                 HorizontalAlignment="Left"
+                                 VerticalAlignment="Center"
+                                 Stretch="Uniform">
+                            <TextBlock x:Name="taglineTextBlock"
+                                       FontStyle="Italic"
+                                       Foreground="White"
+                                       Opacity="0.54" />
+                        </Viewbox>
+
+                        <!--  Poster  -->
+                        <Grid Grid.Row="2" Margin="0,6,0,6">
+                            <Image x:Name="posterImage"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Stretch="Uniform" />
+                            <TextBlock x:Name="ratingTextBlock"
+                                       Margin="0,0,30,0"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Bottom"
+                                       FontSize="36"
+                                       Foreground="White"
+                                       Opacity="{Binding ElementName=taglineTextBlock, Path=Opacity, Mode=OneTime}" />
+                        </Grid>
+
+                        <!--  Plot  -->
+                        <ScrollViewer Grid.Row="3"
+                                      Margin="12,6,12,6"
+                                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <TextBlock x:Name="plotTextBlock"
+                                       FontSize="24"
+                                       Foreground="White"
+                                       Opacity="{Binding ElementName=taglineTextBlock, Path=Opacity, Mode=OneTime}"
+                                       TextWrapping="Wrap" />
+                        </ScrollViewer>
+
+                        <!--  Buttons  -->
+                        <Grid Grid.Row="4"
+                              Height="60"
+                              Margin="0,6,0,24">
+                            <!--  Play Btn  -->
+                            <Grid Width="180"
+                                  HorizontalAlignment="Center"
+                                  Background="Transparent">
+                                <local:ClickGrid x:Name="playBtn"
+                                                 Background="#303c4a"
+                                                 Click="playBtn_Click"
+                                                 IsEnabled="{Binding ElementName=movieLB, Path=SelectedIndex, Converter={StaticResource PlayButtonIsEnabledConverter}}"
+                                                 Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <TextBlock HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="20"
+                                               Foreground="White"
+                                               Text="▶" />
+                                </local:ClickGrid>
+                            </Grid>
+
+                            <!--  Edit Button  -->
+                            <local:ClickGrid Margin="0,6,24,6"
+                                             HorizontalAlignment="Right"
+                                             Click="EditGrid_Click">
+                                <Image Opacity="0.7"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       Source="..\..\Resources\EditIcon.png"
+                                       Stretch="Uniform" />
+                            </local:ClickGrid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+
+                <!--  Edit Overlay  -->
+                <local:EditUserControl x:Name="editUserControl"
+                                       HorizontalAlignment="Stretch"
+                                       VerticalAlignment="Stretch"
+                                       Visibility="Hidden" />
+
+                <!--  Options Grid Background  -->
+                <Grid Name="optionsGridBG"
+                      Background="Black"
+                      MouseDown="optionsGridBG_MouseDown"
+                      Visibility="Collapsed" />
+
+                <!--  Options Grid  -->
+                <Grid Name="optionsGrid"
+                      Height="700"
+                      VerticalAlignment="Top"
+                      Background="#3c4755"
+                      Visibility="Hidden">
+                    <Grid.RenderTransform>
+                        <TranslateTransform x:Name="optionsGridTranslate" />
+                    </Grid.RenderTransform>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Border Margin="24,24,24,6" Style="{StaticResource SeperatorBorderStyle}" />
+
+                    <!--  Movies with no ID  -->
+                    <Grid Name="moviesWithNoIDOptionGrid"
+                          Grid.Row="1"
+                          Margin="24,12,24,12"
+                          HorizontalAlignment="Stretch"
+                          Visibility="Collapsed">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center"
+                                   FontSize="28"
+                                   Foreground="White"
+                                   Text="Movies with no ID detected. Re-fetch the affected movies's data from IMDB?" />
+
+                        <!--  Refresh All  -->
+                        <local:ClickGrid Grid.Column="2"
+                                         Width="180"
+                                         Height="60"
+                                         Margin="12,0,0,0"
+                                         HorizontalAlignment="Right"
+                                         Background="#303c4a"
+                                         Click="RescrapMoviesWithNoIDGrid_Click">
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="1"
+                                           Margin="0,0,0,5"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontSize="28"
+                                           FontWeight="SemiBold"
+                                           Foreground="White"
+                                           Text="YES" />
+                            </Grid>
+                        </local:ClickGrid>
+                    </Grid>
+
+                    <Border Name="moviesWithNoIDOptionBorder"
+                            Grid.Row="2"
+                            Style="{StaticResource SeperatorBorderStyle}"
+                            Visibility="Collapsed" />
+
+                    <!--  Refresh All  -->
+                    <Grid Grid.Row="3"
+                          Margin="24,12,24,12"
+                          HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center"
+                                   FontSize="28"
+                                   Foreground="White"
+                                   Text="Refresh movie ratings [only works for movies with ID]" />
+
+                        <!--  Refresh Last 10  -->
+                        <local:ClickGrid Grid.Column="1"
+                                         Width="180"
+                                         Height="60"
+                                         Margin="12,0,0,0"
+                                         HorizontalAlignment="Right"
+                                         Background="#303c4a"
+                                         Click="RefreshLast10RatingsGrid_Click">
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Image Margin="12"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       Source="..\..\Resources\Refresh.png"
+                                       Stretch="Uniform" />
+                                <TextBlock Grid.Column="1"
+                                           Margin="0,0,0,5"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontSize="28"
+                                           FontWeight="SemiBold"
+                                           Foreground="White"
+                                           Text="LAST 10" />
+                            </Grid>
+                        </local:ClickGrid>
+
+                        <!--  Refresh Last 20  -->
+                        <local:ClickGrid Grid.Column="2"
+                                         Width="180"
+                                         Height="60"
+                                         Margin="12,0,0,0"
+                                         HorizontalAlignment="Right"
+                                         Background="#303c4a"
+                                         Click="RefreshLast20RatingsGrid_Click">
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Image Margin="12"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       Source="..\..\Resources\Refresh.png"
+                                       Stretch="Uniform" />
+                                <TextBlock Grid.Column="1"
+                                           Margin="0,0,0,5"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontSize="28"
+                                           FontWeight="SemiBold"
+                                           Foreground="White"
+                                           Text="LAST 20" />
+                            </Grid>
+                        </local:ClickGrid>
+
+                        <!--  Refresh All  -->
+                        <local:ClickGrid Grid.Column="3"
+                                         Width="180"
+                                         Height="60"
+                                         Margin="12,0,0,0"
+                                         HorizontalAlignment="Right"
+                                         Background="#303c4a"
+                                         Click="RefreshAllRatingsGrid_Click">
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Image Margin="12"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       Source="..\..\Resources\Refresh.png"
+                                       Stretch="Uniform" />
+                                <TextBlock Grid.Column="1"
+                                           Margin="0,0,0,5"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontSize="28"
+                                           FontWeight="SemiBold"
+                                           Foreground="White"
+                                           Text="ALL" />
+                            </Grid>
+                        </local:ClickGrid>
+                    </Grid>
+
+                    <Border Grid.Row="4" Style="{StaticResource SeperatorBorderStyle}" />
+
+                    <!--  Movie Base Paths  -->
+                    <Grid Grid.Row="5"
+                          Height="200"
+                          Margin="24,12,24,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!--  Movie Location Paths  -->
+                        <Grid Margin="0,0,20,0" Background="#171d24">
+                            <Viewbox Margin="48"
+                                     HorizontalAlignment="Center"
+                                     Stretch="Uniform"
+                                     Visibility="{Binding ElementName=movieLocLB, Path=Items.IsEmpty, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <StackPanel>
+                                    <TextBlock HorizontalAlignment="Center"
+                                               FontSize="24"
+                                               Foreground="White"
+                                               Opacity="0.54"
+                                               Text="Movie Location Empty" />
+                                    <TextBlock Name="defaultLocMovieLocation"
+                                               HorizontalAlignment="Center"
+                                               FontSize="12"
+                                               Foreground="White"
+                                               Opacity="0.3" />
+                                </StackPanel>
+                            </Viewbox>
+                            <ListBox Name="movieLocLB"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     FontSize="24">
+                                <ListBox.Resources>
+                                    <Style TargetType="{x:Type ListBoxItem}">
+                                        <Setter Property="Foreground" Value="White" />
+                                    </Style>
+                                </ListBox.Resources>
+                            </ListBox>
+                        </Grid>
+
+                        <!--  Add and Remove button  -->
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <local:ClickGrid Height="{Binding ElementName=playBtn, Path=ActualHeight}"
+                                             HorizontalAlignment="Right"
+                                             VerticalAlignment="Bottom"
+                                             Click="addBtn_Click">
+                                <Image RenderOptions.BitmapScalingMode="HighQuality"
+                                       Source="../../Resources/AddIcon.png"
+                                       Stretch="Uniform" />
+                            </local:ClickGrid>
+
+                            <Grid Grid.Row="2"
+                                  Height="{Binding ElementName=playBtn, Path=ActualHeight}"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Top">
+
+                                <Image Name="removeIconShadow"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       Source="../../Resources/RemoveIcon.png"
+                                       Stretch="Uniform" />
+                                <Rectangle Fill="DimGray">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Visual="{Binding ElementName=removeIconShadow}" />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+
+                                <local:ClickGrid Click="removeBtn_Click"
+                                                 IsEnabled="{Binding ElementName=movieLocLB, Path=SelectedIndex, Converter={StaticResource PlayButtonIsEnabledConverter}}"
+                                                 Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <Image RenderOptions.BitmapScalingMode="HighQuality"
+                                           Source="../../Resources/RemoveIcon.png"
+                                           Stretch="Uniform" />
+                                </local:ClickGrid>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+
+                    <Border Grid.Row="6" Style="{StaticResource SeperatorBorderStyle}" />
+
+                    <!--  Notification Center  -->
+                    <Grid Grid.Row="7"
+                          Margin="24,12,24,12"
+                          Background="#171d24">
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="72"
+                                   Foreground="White"
+                                   Opacity="0.06"
+                                   Text="NOTIFICATION" />
+                        <TextBox Name="notificationTB"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Stretch"
+                                 AcceptsReturn="True"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Focusable="False"
+                                 FontSize="24"
+                                 Foreground="White"
+                                 VerticalScrollBarVisibility="Auto" />
+                    </Grid>
+
+                    <Border Grid.Row="8"
+                            Margin="24,6,24,24"
+                            Style="{StaticResource SeperatorBorderStyle}" />
+                </Grid>
+
+                <!--  Loading Grid  -->
+                <Grid Name="loadingGrid"
+                      Background="#2c3b47"
+                      Opacity="0.8">
+                    <TextBlock HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontSize="72"
+                               Foreground="White"
+                               Text="Loading... please wait." />
+                </Grid>
+
+                <!--  Notification  -->
+                <local:NotificationUserControl x:Name="notificationUserControl"
+                                               Width="500"
+                                               Height="80"
+                                               Margin="0,0,0,48"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Bottom" />
+            </Grid>
+        </Viewbox>
+    </Grid>
+</Window>

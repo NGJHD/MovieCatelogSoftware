@@ -1,0 +1,2 @@
+Mozilla/1.22 (compatible; MSIE 2.0; Windows 3.1)
+BlackBerry7100/4.0.0 Profile/MIDP-2.0 Configuration/CLDC-1.1

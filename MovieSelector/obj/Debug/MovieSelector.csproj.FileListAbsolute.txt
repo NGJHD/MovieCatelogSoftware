@@ -1,0 +1,221 @@
+d:\my documents\visual studio 2012\Projects\MovieSelector\MovieSelector\obj\Debug\MainWindow.baml
+d:\my documents\visual studio 2012\Projects\MovieSelector\MovieSelector\obj\Debug\MainWindow.g.cs
+d:\my documents\visual studio 2012\Projects\MovieSelector\MovieSelector\obj\Debug\App.g.cs
+d:\my documents\visual studio 2012\Projects\MovieSelector\MovieSelector\obj\Debug\MovieSelector.Properties.Resources.resources
+d:\my documents\visual studio 2012\Projects\MovieSelector\MovieSelector\obj\Debug\MovieSelector.csproj.GenerateResource.Cache
+d:\my documents\visual studio 2012\Projects\MovieSelector\MovieSelector\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Ironman\Desktop\Others\Personal\MovieSelector\MovieSelector\obj\Debug\MovieSelector.csprojResolveAssemblyReference.cache
+C:\Users\Ironman\Desktop\Others\Personal\MovieSelector\MovieSelector\obj\Debug\MainWindow.g.cs
+C:\Users\Ironman\Desktop\Others\Personal\MovieSelector\MovieSelector\obj\Debug\App.g.cs
+C:\Users\Ironman\Desktop\Others\Personal\MovieSelector\MovieSelector\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Ironman\Desktop\Others\Personal\MovieSelector\MovieSelector\obj\Debug\MainWindow.baml
+C:\Users\Ironman\Desktop\Others\Personal\MovieSelector\MovieSelector\obj\Debug\MovieSelector.Properties.Resources.resources
+C:\Users\Ironman\Desktop\Others\Personal\MovieSelector\MovieSelector\obj\Debug\MovieSelector.csproj.GenerateResource.Cache
+C:\Users\Ironman\Desktop\Others\Personal\MovieSelector\MovieSelector\obj\Debug\OptionWindow.baml
+C:\Users\Ironman\Desktop\Others\Personal\MovieSelector\MovieSelector\obj\Debug\OptionWindow.g.cs
+C:\Users\Ironman\Desktop\Others\Personal\MovieSelector\MovieSelector\bin\Debug\Movie Selector.exe.config
+C:\Users\Ironman\Desktop\Others\Personal\MovieSelector\MovieSelector\bin\Debug\Movie Selector.exe
+C:\Users\Ironman\Desktop\Others\Personal\MovieSelector\MovieSelector\bin\Debug\Movie Selector.pdb
+C:\Users\Ironman\Desktop\Others\Personal\MovieSelector\MovieSelector\obj\Debug\Movie Selector_MarkupCompile.cache
+C:\Users\Ironman\Desktop\Others\Personal\MovieSelector\MovieSelector\obj\Debug\Movie Selector_MarkupCompile.lref
+C:\Users\Ironman\Desktop\Others\Personal\MovieSelector\MovieSelector\obj\Debug\Movie Selector.g.resources
+C:\Users\Ironman\Desktop\Others\Personal\MovieSelector\MovieSelector\obj\Debug\Movie Selector.exe
+C:\Users\Ironman\Desktop\Others\Personal\MovieSelector\MovieSelector\obj\Debug\Movie Selector.pdb
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector\MovieSelector\bin\Debug\Movie Selector.exe.config
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector\MovieSelector\obj\Debug\Movie Selector.exe
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector\MovieSelector\obj\Debug\Movie Selector.pdb
+Y:\Movie Selector\Movie Selector.exe.config
+Y:\Movie Selector\Movie Selector.exe
+Y:\Movie Selector\Movie Selector.pdb
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector\MovieSelector\obj\Debug\OptionWindow.g.cs
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector\MovieSelector\obj\Debug\Movie Selector_MarkupCompile.cache
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector\MovieSelector\obj\Debug\Movie Selector_MarkupCompile.lref
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector\MovieSelector\obj\Debug\OptionWindow.baml
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector\MovieSelector\obj\Debug\Movie Selector.g.resources
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector\MovieSelector\Movie Selector.exe.config
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector\MovieSelector\bin\Debug\Movie Selector.exe
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector\MovieSelector\bin\Debug\Movie Selector.pdb
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\bin\Debug\Movie Selector Metro.exe.config
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\bin\Debug\Movie Selector Metro.exe
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\bin\Debug\Movie Selector Metro.pdb
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\bin\Debug\MahApps.Metro.dll
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\bin\Debug\System.Windows.Interactivity.dll
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\bin\Debug\MahApps.Metro.pdb
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\bin\Debug\MahApps.Metro.xml
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\obj\Debug\App.baml
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\obj\Debug\App.g.cs
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro_MarkupCompile.cache
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro_MarkupCompile.lref
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro.g.resources
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.Properties.Resources.resources
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.GenerateResource.Cache
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro.exe
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro.pdb
+C:\Users\Darren Laptop\Desktop\MovieSelector Metro\MovieSelector\bin\Debug\Movie Selector Metro.exe.config
+C:\Users\Darren Laptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro.exe
+C:\Users\Darren Laptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro.pdb
+C:\Users\Darren Laptop\Desktop\MovieSelector Metro\MovieSelector\bin\Debug\Movie Selector Metro.exe
+C:\Users\Darren Laptop\Desktop\MovieSelector Metro\MovieSelector\bin\Debug\Movie Selector Metro.pdb
+C:\Users\Darren Laptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\App.baml
+C:\Users\Darren Laptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\App.g.cs
+C:\Users\Darren Laptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Darren Laptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro_MarkupCompile.cache
+C:\Users\Darren Laptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro_MarkupCompile.lref
+C:\Users\Darren Laptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro.g.resources
+C:\Users\Darren Laptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.Properties.Resources.resources
+C:\Users\Darren Laptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.GenerateResource.Cache
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\MainWindow.g.cs
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\MainWindow.baml
+C:\Users\Darren Laptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\MainWindow.g.cs
+C:\Users\Darren Laptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\MainWindow.baml
+C:\Users\Darren Laptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\ComboBoxUserControl.baml
+C:\Users\Darren Laptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\ComboBoxUserControl.g.cs
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\obj\Debug\ComboBoxUserControl.baml
+D:\My Documents\Visual Studio 2012\Projects\MovieSelector Metro\MovieSelector\obj\Debug\ComboBoxUserControl.g.cs
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\bin\Debug\Movie Selector Metro.exe.config
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro.exe
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro.pdb
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\bin\Debug\Movie Selector Metro.exe
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\bin\Debug\Movie Selector Metro.pdb
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\bin\Debug\MahApps.Metro.dll
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\bin\Debug\System.Windows.Interactivity.dll
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\bin\Debug\MahApps.Metro.pdb
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\bin\Debug\MahApps.Metro.xml
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csprojResolveAssemblyReference.cache
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\obj\Debug\ComboBoxUserControl.baml
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\obj\Debug\App.baml
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\obj\Debug\ComboBoxUserControl.g.cs
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\MainWindow.g.cs
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\obj\Debug\App.g.cs
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro_MarkupCompile.cache
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro_MarkupCompile.lref
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\MainWindow.baml
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro.g.resources
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.Properties.Resources.resources
+D:\My Documents\Visual Studio 2012\Projects 2012\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.GenerateResource.Cache
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\bin\Debug\Movie Selector Metro.exe.config
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\bin\Debug\Movie Selector Metro.exe
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\bin\Debug\Movie Selector Metro.pdb
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\bin\Debug\MahApps.Metro.pdb
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\bin\Debug\MahApps.Metro.xml
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csprojAssemblyReference.cache
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\ComboBoxUserControl.baml
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\App.baml
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\ComboBoxUserControl.g.cs
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\MainWindow.g.cs
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\App.g.cs
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro_MarkupCompile.cache
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro_MarkupCompile.lref
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\MainWindow.baml
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro.g.resources
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.Properties.Resources.resources
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.GenerateResource.cache
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.CoreCompileInputs.cache
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.CopyComplete
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro.exe
+C:\Users\ngjhd\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\Movie Selector Metro.pdb
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\App.baml
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\MainWindow.g.cs
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\App.g.cs
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\MainWindow.baml
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.Properties.Resources.resources
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.GenerateResource.cache
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.CoreCompileInputs.cache
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csprojAssemblyReference.cache
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\ComboBoxUserControl.baml
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\App.baml
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\ComboBoxUserControl.g.cs
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\EditUserControl.g.cs
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\MainWindow.g.cs
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\App.g.cs
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\EditUserControl.baml
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\MainWindow.baml
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.Properties.Resources.resources
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.GenerateResource.cache
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.CoreCompileInputs.cache
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\bin\Debug\MCS.exe.config
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\bin\Debug\MCS.exe
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\bin\Debug\MCS.pdb
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MCS_MarkupCompile.cache
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MCS_MarkupCompile.lref
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MCS.g.resources
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MCS.exe
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MCS.pdb
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\NotificationUserControl.g.cs
+C:\Users\dev\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\NotificationUserControl.baml
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\bin\Debug\MCS.exe.config
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\bin\Debug\MCS.exe
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\bin\Debug\MCS.pdb
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csprojAssemblyReference.cache
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\ComboBoxUserControl.baml
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\App.baml
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\ComboBoxUserControl.g.cs
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\EditUserControl.g.cs
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\MainWindow.g.cs
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\NotificationUserControl.g.cs
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\App.g.cs
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MCS_MarkupCompile.cache
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MCS_MarkupCompile.lref
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\EditUserControl.baml
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\MainWindow.baml
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\NotificationUserControl.baml
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MCS.g.resources
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.Properties.Resources.resources
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.GenerateResource.cache
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.CoreCompileInputs.cache
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MCS.exe
+C:\Users\DarrenLaptop\Desktop\MovieSelector Metro\MovieSelector\obj\Debug\MCS.pdb
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\bin\Debug\MCS.exe.config
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\bin\Debug\MCS.exe
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\bin\Debug\MCS.pdb
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\ComboBoxUserControl.baml
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\ComboBoxUserControl.g.cs
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\EditUserControl.g.cs
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\NotificationUserControl.g.cs
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\MCS_MarkupCompile.cache
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\MCS_MarkupCompile.lref
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\EditUserControl.baml
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\NotificationUserControl.baml
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\MCS.g.resources
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\MCS.exe
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\MCS.pdb
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.AssemblyReference.cache
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.SuggestedBindingRedirects.cache
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\bin\Debug\MCS.exe.manifest
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\bin\Debug\MCS.application
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\MCS.exe.manifest
+C:\Users\ngjhd\source\repos\MovieSelector Metro\MovieSelector\obj\Debug\MCS.application
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.AssemblyReference.cache
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.SuggestedBindingRedirects.cache
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\ComboBoxUserControl.baml
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\App.baml
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\ComboBoxUserControl.g.cs
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\EditUserControl.g.cs
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\MainWindow.g.cs
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\NotificationUserControl.g.cs
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\App.g.cs
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\MCS_MarkupCompile.cache
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\MCS_MarkupCompile.lref
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\EditUserControl.baml
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\MainWindow\MainWindow.baml
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\User Controls\NotificationUserControl.baml
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\MCS.g.resources
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.Properties.Resources.resources
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.GenerateResource.cache
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\MovieSelector.csproj.CoreCompileInputs.cache
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\MCS.exe
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\MCS.pdb
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\bin\Debug\MCS.exe.config
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\bin\Debug\MCS.exe.manifest
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\bin\Debug\MCS.application
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\bin\Debug\MCS.exe
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\bin\Debug\MCS.pdb
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\MCS.exe.manifest
+C:\Users\ngjhd\OneDrive\Files\repos\MovieSelector Metro\MovieSelector\obj\Debug\MCS.application
