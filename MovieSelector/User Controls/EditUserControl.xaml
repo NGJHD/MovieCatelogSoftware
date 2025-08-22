@@ -1,0 +1,252 @@
+﻿<UserControl x:Class="MovieSelector.EditUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:MovieSelector">
+    <UserControl.Resources>
+        <local:ZeroToInvertedVisibilityConverter x:Key="ZeroToInvertedVisibilityConverter" />
+
+        <Style x:Key="headerTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Opacity" Value="0.7" />
+            <Setter Property="Margin" Value="0,3,0,0" />
+        </Style>
+
+        <Style x:Key="valueTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Margin" Value="12,0,12,12" />
+            <Setter Property="Padding" Value="6" />
+            <Setter Property="Background" Value="#252e38" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CaretBrush" Value="White" />
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+        <Style x:Key="buttonStyle" TargetType="local:ClickGrid">
+            <Setter Property="Width" Value="180" />
+            <Setter Property="Height" Value="60" />
+            <Setter Property="Background" Value="#303c4a" />
+        </Style>
+
+        <Style x:Key="buttonTextStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <!--  Background  -->
+        <local:ClickGrid Background="#2c3b47"
+                         Click="cancelGrid_Click"
+                         Opacity="0.7" />
+
+        <!--  Main  -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!--  Background  -->
+            <Grid Grid.Column="1"
+                  Grid.ColumnSpan="2"
+                  Background="#2c3b47"
+                  Opacity="1" />
+
+            <Image Grid.Column="1"
+                   Grid.ColumnSpan="2"
+                   Opacity="0.85"
+                   RenderOptions.BitmapScalingMode="HighQuality"
+                   Source="../../Resources/GlassFrame.png"
+                   Stretch="Fill" />
+
+            <!--  Edit Image  -->
+            <Grid Grid.Column="1"
+                  Margin="48"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Image Name="posterImage"
+                       RenderOptions.BitmapScalingMode="HighQuality"
+                       Stretch="Uniform" />
+                <local:ClickGrid Grid.Row="1"
+                                 Width="Auto"
+                                 HorizontalAlignment="Stretch"
+                                 Click="changeImageGrid_Click"
+                                 Style="{StaticResource buttonStyle}">
+                    <TextBlock Style="{StaticResource buttonTextStyle}" Text="CHANGE POSTER" />
+                </local:ClickGrid>
+            </Grid>
+
+
+
+            <!--  Edit Text  -->
+            <StackPanel Grid.Column="2"
+                        Margin="48,0,48,0"
+                        VerticalAlignment="Center">
+                <!--  Text  -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!--  Title  -->
+                    <TextBlock Style="{StaticResource headerTextBlockStyle}" Text="Title" />
+                    <TextBox Name="titleTextBox"
+                             Grid.Column="1"
+                             Background="Transparent"
+                             IsHitTestVisible="False"
+                             Style="{StaticResource valueTextBoxStyle}" />
+
+                    <!--  Error Message  -->
+                    <TextBlock Name="errMsgTextBlock"
+                               Grid.Row="1"
+                               Grid.Column="1"
+                               Margin="12,0,0,12"
+                               FontSize="24"
+                               Foreground="Red"
+                               Text="Cannot find this ID in IMDB"
+                               Visibility="Collapsed" />
+
+                    <!--  IMDB ID  -->
+                    <TextBlock Grid.Row="2"
+                               Style="{StaticResource headerTextBlockStyle}"
+                               Text="IMDB ID" />
+                    <TextBox Name="imdbIDTextBox"
+                             Grid.Row="2"
+                             Grid.Column="1"
+                             Style="{StaticResource valueTextBoxStyle}" />
+                    <local:ClickGrid Grid.Row="2"
+                                     Grid.Column="2"
+                                     Height="35"
+                                     VerticalAlignment="Top"
+                                     Click="RefreshGrid_Click"
+                                     Visibility="{Binding ElementName=imdbIDTextBox, Path=Text.Length, Converter={StaticResource ZeroToInvertedVisibilityConverter}}">
+                        <Image Margin="0,5,0,0"
+                               RenderOptions.BitmapScalingMode="HighQuality"
+                               Source="..\..\Resources\Refresh.png"
+                               Stretch="Uniform" />
+                    </local:ClickGrid>
+
+                    <!--  Tagline  -->
+                    <TextBlock Grid.Row="3"
+                               Style="{StaticResource headerTextBlockStyle}"
+                               Text="Tagline" />
+                    <TextBox Name="taglineTextBox"
+                             Grid.Row="3"
+                             Grid.Column="1"
+                             Height="76"
+                             Style="{StaticResource valueTextBoxStyle}" />
+
+                    <!--  Rating  -->
+                    <TextBlock Grid.Row="4"
+                               Style="{StaticResource headerTextBlockStyle}"
+                               Text="Rating" />
+                    <TextBox Name="ratingTextBox"
+                             Grid.Row="4"
+                             Grid.Column="1"
+                             Style="{StaticResource valueTextBoxStyle}" />
+
+                    <!--  Plot  -->
+                    <TextBlock Grid.Row="5"
+                               Style="{StaticResource headerTextBlockStyle}"
+                               Text="Plot" />
+                    <TextBox Name="plotTextBox"
+                             Grid.Row="5"
+                             Grid.Column="1"
+                             Height="342"
+                             Style="{StaticResource valueTextBoxStyle}" />
+
+                    <!--  Genre  -->
+                    <TextBlock Grid.Row="6"
+                               Style="{StaticResource headerTextBlockStyle}"
+                               Text="Genre" />
+                    <TextBox Name="genreTextBox"
+                             Grid.Row="6"
+                             Grid.Column="1"
+                             Style="{StaticResource valueTextBoxStyle}" />
+
+                    <!--  Director  -->
+                    <TextBlock Grid.Row="7"
+                               Style="{StaticResource headerTextBlockStyle}"
+                               Text="Director" />
+                    <TextBox Name="directorTextBox"
+                             Grid.Row="7"
+                             Grid.Column="1"
+                             Height="76"
+                             Style="{StaticResource valueTextBoxStyle}" />
+
+                    <!--  Cast  -->
+                    <TextBlock Grid.Row="8"
+                               Style="{StaticResource headerTextBlockStyle}"
+                               Text="Cast" />
+                    <TextBox Name="castTextBox"
+                             Grid.Row="8"
+                             Grid.Column="1"
+                             Height="76"
+                             Style="{StaticResource valueTextBoxStyle}" />
+
+                    <!--  Buttons  -->
+                    <StackPanel Grid.Row="9"
+                                Grid.Column="1"
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal">
+                        <local:ClickGrid Margin="0,0,6,0"
+                                         Click="cancelGrid_Click"
+                                         Style="{StaticResource buttonStyle}">
+                            <TextBlock Style="{StaticResource buttonTextStyle}" Text="CANCEL" />
+                        </local:ClickGrid>
+                        <local:ClickGrid Margin="6,0,0,0"
+                                         Click="saveGrid_Click"
+                                         Style="{StaticResource buttonStyle}">
+                            <TextBlock Style="{StaticResource buttonTextStyle}" Text="SAVE" />
+                        </local:ClickGrid>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+
+            <!--  Wait Overlay  -->
+            <Grid Name="waitGrid"
+                  Grid.Column="1"
+                  Grid.ColumnSpan="2"
+                  Background="#2c3b47"
+                  Opacity="0.95"
+                  Visibility="Hidden">
+                <Image Grid.Column="1"
+                       Opacity="0.85"
+                       RenderOptions.BitmapScalingMode="HighQuality"
+                       Source="../../Resources/GlassFrame.png"
+                       Stretch="Fill" />
+                <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="48"
+                           Foreground="White"
+                           Text="Fetching from IMDB...&#x0a;&#x0a;Please wait..."
+                           TextAlignment="Center"
+                           TextWrapping="Wrap" />
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>
