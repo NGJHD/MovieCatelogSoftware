@@ -23,12 +23,13 @@ namespace IMDB_Scraper
         public string Cast { get; set; }
 
         //Search Engine URLs
-        private string GoogleSearch = "https://www.google.com/search?q=imdb+";
-        private string BaiduSearch = "http://www.baidu.com/s?wd=imdb+";
-        private string BingSearch = "http://www.bing.com/search?q=imdb+";
-        private string YahooSearch = "https://sg.search.yahoo.com/search;_ylt=AmSK70RQHp42zKY9nz3vorKCG7J_?p=imdb+";
+        //private string GoogleSearch = "https://www.google.com/search?q=imdb+";
+        private string DuckDuckGoSearch = "https://duckduckgo.com/?q=imdb+";
+        //private string BaiduSearch = "http://www.baidu.com/s?wd=imdb+";
+        //private string BingSearch = "http://www.bing.com/search?q=imdb+";
+        private string YahooSearch = "https://search.yahoo.com/search?p=imdb+";
 
-        private string imdbMatchString = "https://www.imdb.com/title/tt";
+        private string imdbMatchString = "https://www.imdb.com/title/tt";        
 /*************************************************************************************************************************************/
         private bool checkIfYear(string temp)
         {
@@ -107,25 +108,21 @@ namespace IMDB_Scraper
         }
  
         //Get IMDB URL from search results
-        private string getIMDbUrl(string MovieName, string searchEngine = "google")
+        private string getIMDbUrl(string MovieName, string searchEngine = "yahoo")
         {
             string url = "";
             string searchMovieName = MovieName.Replace('(', '+').Replace(")", "").Replace(' ', '+').Replace('-', '+').Replace('.', '+');
-            if (searchEngine.ToLower().Equals("google"))
-                url = GoogleSearch + searchMovieName;
-            else if (searchEngine.ToLower().Equals("baidu"))
-                url = BaiduSearch + searchMovieName;
-            /*else if (searchEngine.ToLower().Equals("bing"))
-                url = BingSearch + searchMovieName;
-            else if (searchEngine.ToLower().Equals("yahoo")) 
-                url = YahooSearch + searchMovieName;*/
+            
+            if (searchEngine.ToLower().Equals("yahoo")) 
+                url = YahooSearch + searchMovieName;
+            else if (searchEngine.ToLower().Equals("duckduckgo"))
+                url = DuckDuckGoSearch + searchMovieName;
 
-            string html = getUrlData(url);
+            string html = System.Net.WebUtility.UrlDecode(getUrlData(url));
 
             //ArrayList imdbUrls = matchAll(@"<a href=""(http://www.imdb.com/title/tt\d{7}/)"".*?>.*?</a>", html);
             
-            string imdbURL = "";
-
+            string imdbURL = "";            
             if (html.Contains(imdbMatchString) == true)
             {
                 imdbURL = removeLastNonDigit(html.Substring(html.IndexOf(imdbMatchString), imdbMatchString.Count() + 10));
@@ -149,21 +146,11 @@ namespace IMDB_Scraper
             {
                 return imdbURL;// (string)imdbUrls[0]; //return first IMDB result
             }
-            else if (searchEngine == "google") //if Google search fails
+            else if (searchEngine == "yahoo") //if Yahoo search fails
             {
                 System.Threading.Thread.Sleep(300);
-                return getIMDbUrl(MovieName, "baidu"); //search using Baidu
-            }
-            else if (searchEngine == "baidu") //if Baidu search fails
-            {
-                System.Threading.Thread.Sleep(100);
-                return getIMDbUrl(MovieName, "bing"); //search using Bing
-            }
-            else if (searchEngine == "bing") //if Bing search fails
-            {
-                System.Threading.Thread.Sleep(100);
-                return getIMDbUrl(MovieName, "yahoo"); //search using Yahoo       
-            }
+                return getIMDbUrl(MovieName, "duckduckgo"); //search using DuckDuckGo
+            }            
             else //search fails
                 return string.Empty;
         }
@@ -251,7 +238,8 @@ namespace IMDB_Scraper
             ExtendedWebClient client = new ExtendedWebClient();
 
             client.Headers.Add("User-Agent: Lynx/2.9.2 libwww-FM/2.14 SSL-MM/1.4.1 OpenSSL/3.4.0");
-                        
+            //client.Headers.Add("User-Agent: Mozilla / 5.0(Windows NT 10.0; Win64; x64) AppleWebKit / 537.36(KHTML, like Gecko) Chrome / 140.0.0.0 Safari / 537.36");
+            
             string html = "";
             using (Stream datastream = client.OpenRead(url))
             {

@@ -16,7 +16,7 @@ namespace MovieSelector
         {
             try
             {
-                MessageBox.Show("Movie Catalogue Software v4.1.3\n" +
+                MessageBox.Show("Movie Catalogue Software v4.1.4\n" +
                                 "Written by: Darren Ng\n" +
                                 "Email: ng.jh.darren@outlook.com\n", "Info");
             }
