@@ -5,7 +5,9 @@ using System.Net;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-  
+using System.Net.Http;
+using System.Threading.Tasks;
+
 namespace IMDB_Scraper
 {
     public class IMDB
@@ -235,6 +237,35 @@ namespace IMDB_Scraper
         //Get URL Data
         private string getUrlData(string url)
         {
+            // Set global connection limit for the server
+            var sp = ServicePointManager.FindServicePoint(new Uri(url));
+            sp.ConnectionLimit = 20; 
+
+            // Use HttpClientHandler for automatic decompression
+            var handler = new HttpClientHandler
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+                UseCookies = true,
+                AllowAutoRedirect = true
+            };
+
+            using (var client = new HttpClient(handler))
+            {
+                // Browser-like headers
+                client.DefaultRequestHeaders.Add("User-Agent",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36");
+                client.DefaultRequestHeaders.Add("Accept",
+                    "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+                client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.9");
+                client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+                client.DefaultRequestHeaders.Add("Upgrade-Insecure-Requests", "1");
+
+                // Synchronous call
+                return client.GetStringAsync(url).GetAwaiter().GetResult();
+            }
+        }
+        /*private string getUrlData(string url)
+        {
             ExtendedWebClient client = new ExtendedWebClient();
 
             client.Headers.Add("User-Agent: Lynx/2.9.2 libwww-FM/2.14 SSL-MM/1.4.1 OpenSSL/3.4.0");
@@ -242,7 +273,7 @@ namespace IMDB_Scraper
             
             string html = "";
             using (Stream datastream = client.OpenRead(url))
-            {
+            {                
                 using (StreamReader reader = new StreamReader(datastream))
                 {
                     StringBuilder sb = new StringBuilder();
@@ -254,21 +285,11 @@ namespace IMDB_Scraper
             }
 
             return html;
-
-            /*WebClient client = new WebClient();
-
-            Stream datastream = client.OpenRead(url);
-            StreamReader reader = new StreamReader(datastream);
-            StringBuilder sb = new StringBuilder();
-            while (!reader.EndOfStream)
-                sb.Append(reader.ReadLine());
-
-            return sb.ToString();*/
-        }
-/*************************************************************************************************************************************/
+        }*/
+        /*************************************************************************************************************************************/
     }
 
-    public class ExtendedWebClient : WebClient
+    /*public class ExtendedWebClient : WebClient
     {
         /// <summary>
         /// Gets or sets the maximum number of concurrent connections (default is 2).
@@ -297,5 +318,5 @@ namespace IMDB_Scraper
 
             return request;
         }
-    }
+    }*/
 }

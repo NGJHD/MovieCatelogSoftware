@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Runtime.InteropServices;
+using System.Reflection;
 
 namespace MovieSelector
 {
@@ -16,7 +17,9 @@ namespace MovieSelector
         {
             try
             {
-                MessageBox.Show("Movie Catalogue Software v4.1.4\n" +
+                Version version = Assembly.GetExecutingAssembly().GetName().Version;
+
+                MessageBox.Show($"Movie Catalogue Software v{version.Major}.{version.Minor}.{version.Build}\n" +
                                 "Written by: Darren Ng\n" +
                                 "Email: ng.jh.darren@outlook.com\n", "Info");
             }
