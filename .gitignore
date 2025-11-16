@@ -1,3 +1,4 @@
 .vs/
 MovieSelector/obj/
-MovieSelector/bin/
+MovieSelector/bin/*
+!MovieSelector/bin/Debug/MCS.exe
