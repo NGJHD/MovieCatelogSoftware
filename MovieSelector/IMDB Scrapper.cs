@@ -7,6 +7,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Security.Policy;
+
 
 namespace IMDB_Scraper
 {
@@ -161,7 +163,7 @@ namespace IMDB_Scraper
         private void parseIMDbPage(string imdbUrl)
         {
             //string html = getUrlData(imdbUrl+"combined");
-            string html = getUrlData(imdbUrl + "/reference/");
+            //string html = getUrlData(imdbUrl + "/reference/");
 
             //Id = match(@"<link rel=""canonical"" href=""http://www.imdb.com/title/(tt\d{7})/combined"" />", html);
             //Id = match(@"<link rel=""canonical"" href=""https://www.imdb.com/title/(tt\d{7})/reference"" />", html);
@@ -176,7 +178,43 @@ namespace IMDB_Scraper
 
             if (!string.IsNullOrEmpty(Id))
             {
-                Rating = match(@"""ipc-rating-star--rating"">(.*?)</span>", html);                
+                string url = $"https://www.omdbapi.com/?i={Id}&plot=full&apikey=REDACTED-ROTATED-KEY";
+
+                string json = getUrlData(url);
+                dynamic data = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
+
+                // Rating
+                Rating = data.imdbRating?.ToString() ?? string.Empty;
+
+                // Plot
+                Plot = System.Net.WebUtility.HtmlDecode(data.Plot?.ToString() ?? string.Empty);
+
+                // Tagline — OMDb does not provide taglines, keep empty or remove
+                Tagline = string.Empty;
+
+                // Genres
+                Genre = data.Genre?.ToString() ?? string.Empty;  // Already comma-separated e.g. "Action, Drama"
+
+                // Director
+                Director = data.Director?.ToString() ?? string.Empty;  // Already comma-separated
+
+                // Cast (OMDb returns top 4 billed as comma-separated string)
+                Cast = data.Actors?.ToString() ?? string.Empty;
+
+                // Poster
+                string posterUrl = data.Poster?.ToString() ?? string.Empty;
+                if (!string.IsNullOrEmpty(posterUrl) && posterUrl != "N/A")
+                {
+                    Poster = posterUrl;
+                    PosterLarge = posterUrl;  // OMDb only gives one size, same URL for both
+                }
+                else
+                {
+                    Poster = string.Empty;
+                    PosterLarge = string.Empty;
+                }
+
+                /*Rating = match(@"""ipc-rating-star--rating"">(.*?)</span>", html);                
 
                 string plotSummaryHTML = getUrlData(imdbUrl + "/plotsummary/");
                 Plot = System.Net.WebUtility.HtmlDecode(Regex.Replace(match(@"ipc-html-content-inner-div.*?ipc-html-content-inner-div.*?>(.*?)</div>", plotSummaryHTML), "<.*?>", String.Empty)); ;
@@ -187,12 +225,6 @@ namespace IMDB_Scraper
                 {
                     Genre += genres[j] + (j == genres.Count - 1 ? "" : ", ");
                 }
-
-                /*ArrayList director = matchAll(@"<a.*?href=""/name/.*?"">(.*?)</a>", match(@"Directed by *</h4>(.*?)</table>", html));                
-                for (int j = 0; j < director.Count; j++)
-                {
-                    Director += director[j] + (j == director.Count - 1 ? "" : ", ");
-                }*/
 
                 Director = match(@"Directed by (.*?)\.", html);
 
@@ -212,7 +244,7 @@ namespace IMDB_Scraper
                 {
                     Poster = string.Empty;
                     PosterLarge = string.Empty;                    
-                }                                
+                }                                */
             } 
         }
 /*************************************************************************************************************************************/  
