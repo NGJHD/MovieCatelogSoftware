@@ -185,6 +185,10 @@ namespace IMDB_Scraper
 
                 // Rating
                 Rating = data.imdbRating?.ToString() ?? string.Empty;
+                if (Rating == "N/A")
+                {
+                    Rating = "?";
+                }
 
                 // Plot
                 Plot = System.Net.WebUtility.HtmlDecode(data.Plot?.ToString() ?? string.Empty);
