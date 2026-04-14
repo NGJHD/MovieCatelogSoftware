@@ -48,11 +48,15 @@ namespace MovieSelector
             }
         }
 
-        private void RefreshRatings(int last)
+        private void RefreshRatings(int last, bool onlyWithUnknownRating=false)
         {
             try
             {
-                AddToNotification("Starting rating refresh of " + (last == -1 ? movieLB.Items.Count : last) + " movies...");
+                if (onlyWithUnknownRating == false)
+                {
+                    AddToNotification("Starting rating refresh of " + (last == -1 ? movieLB.Items.Count : last) + " movies...");
+                }
+                
 
                 int totalCount = Math.Min(movieLB.Items.Count, (last == -1 ? movieLB.Items.Count : last));
                 foreach (System.Threading.Thread th in refreshRatingThreadList)
@@ -64,7 +68,7 @@ namespace MovieSelector
                 }
                 refreshRatingThreadList.Clear();
 
-                System.Threading.Thread refreshRatingThread = new System.Threading.Thread(() => refreshRatingFn(totalCount));
+                System.Threading.Thread refreshRatingThread = new System.Threading.Thread(() => refreshRatingFn(totalCount, onlyWithUnknownRating));
                 refreshRatingThread.IsBackground = true;
                 refreshRatingThread.Start();
                 GlobalVariables.ListOfRunningThreads.Add(refreshRatingThread);
@@ -78,31 +82,43 @@ namespace MovieSelector
             }
         }
 /*************************************************************************************************************************************/
-        private void refreshRatingFn(int totalCount)
+        private void refreshRatingFn(int totalCount, bool onlyWithUnknownRating)
         {
             try
             {
                 refreshThreadCount = 0;
 
+                List<string> listOfMovieNames = new List<string>();
+                Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
+                {
+                    for (int i = 0; i < totalCount; i++)
+                    {
+                        listOfMovieNames.Add((movieLB.Items[i] as MovieListBoxClass).movieName);
+                    }
+                }));
+
                 //Loop through all the movies
                 for (int i = 0; i < totalCount; i++)
                 {
                     //Max of 5 threads for stability
-                    while (refreshThreadCount >= 5)
+                    while (refreshThreadCount > 5)
                     {
                         System.Threading.Thread.Sleep(500);
                     }
 
-                    //Add to the thread count immediately when entering
-                    refreshThreadCount++;
+                    if (onlyWithUnknownRating == false || GlobalVariables.MemoryDatabase[listOfMovieNames[i]].Rating == "?")
+                    {
+                        //Add to the thread count immediately when entering
+                        refreshThreadCount++;
 
-                    int temp = i;
+                        int temp = i;
 
-                    System.Threading.Thread fetchRatingThread = new System.Threading.Thread(() => fetchRatingFromIMDB(temp));
-                    fetchRatingThread.IsBackground = true;
-                    fetchRatingThread.Start();
-                    GlobalVariables.ListOfRunningThreads.Add(fetchRatingThread);
-                    refreshRatingThreadList.Add(fetchRatingThread);
+                        System.Threading.Thread fetchRatingThread = new System.Threading.Thread(() => fetchRatingFromIMDB(temp));
+                        fetchRatingThread.IsBackground = true;
+                        fetchRatingThread.Start();
+                        GlobalVariables.ListOfRunningThreads.Add(fetchRatingThread);
+                        refreshRatingThreadList.Add(fetchRatingThread);
+                    }
                 }
 
                 while (refreshThreadCount != 0)
@@ -114,10 +130,13 @@ namespace MovieSelector
                 //GlobalVariables.XmlMovieDoc.Save(GlobalPath.MOVIE_DATABASE_PATH);
                 refreshRatingThreadList.Clear();
 
-                Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
+                if (onlyWithUnknownRating == false)
                 {
-                    AddToNotification("Rating refresh completed");
-                }));
+                    Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
+                    {
+                        AddToNotification("Rating refresh completed");
+                    }));
+                }
             }
             catch (Exception ex)
             {

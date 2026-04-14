@@ -23,7 +23,8 @@ namespace MovieSelector
         private List<FileInfo> listOfFiles = new List<FileInfo>();
         private List<string> deniedAccessList = new List<string>();
         private SORT_CONDITION sortBy = SORT_CONDITION.NAME;
-        private bool needScrapper = false;        
+        private bool needScrapper = false;
+        private bool needRatingScrapper = false;
         private int maxImageLoadingThreadCount = 16;
         private int currentImageLoadingThreadCount = 0;
 /*************************************************************************************************************************************/
@@ -60,12 +61,16 @@ namespace MovieSelector
                 //If data for a movie cannot be found, start the scrapper
                 if (needScrapper == true)
                 {
-                    AddToNotification("Movies w/o data detected. Fetching data from IMDB...");
+                    AddToNotification("Movies w/o data or rating detected. Fetching data from IMDB...");
 
                     System.Threading.Thread scrapperThread = new Thread(startScrapper);
                     scrapperThread.IsBackground = true;
                     scrapperThread.Start();
                     GlobalVariables.ListOfRunningThreads.Add(scrapperThread);
+                }
+                if (needRatingScrapper == true)
+                {
+                    RefreshRatings(-1, true);
                 }
 
                 movieLB.Focus();
@@ -142,6 +147,15 @@ namespace MovieSelector
                             if (GlobalVariables.MemoryDatabase.ContainsKey(movieName) == false)
                             {
                                 needScrapper = true;
+                            }
+                        }
+
+                        //Check whether the movie has ratings
+                        if (needRatingScrapper == false)
+                        {
+                            if (GlobalVariables.MemoryDatabase.ContainsKey(movieName) == true && GlobalVariables.MemoryDatabase[movieName].Rating == "?")
+                            {
+                                needRatingScrapper = true;
                             }
                         }
                     }
