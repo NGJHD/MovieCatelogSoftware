@@ -90,6 +90,8 @@ namespace MovieSelector
 
                 new System.Threading.Thread(() =>
                 {
+                  try
+                  {
                     System.Threading.Thread.CurrentThread.IsBackground = true;
 
                     //Fetch from imdb                        
@@ -141,6 +143,24 @@ namespace MovieSelector
                             }
                         }));
                     }
+                  }
+                  catch (Exception ex)
+                  {
+                    Log.Write(Log.LogMsgType.I, ex.ToString());
+
+                    //Surface the failure instead of leaving the spinner up forever
+                    Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
+                    {
+                        try
+                        {
+                            errMsgTextBlock.Visibility = Visibility.Visible;
+                            waitGrid.Visibility = Visibility.Hidden;
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }));
+                  }
                 }).Start();
             }
             catch (Exception ex)
@@ -210,8 +230,15 @@ namespace MovieSelector
 
                         new System.Threading.Thread(() =>
                         {
-                            System.Threading.Thread.CurrentThread.IsBackground = true;
-                            GlobalVariables.MainWindow.UpdateEntryToFile(movieName, GlobalVariables.MemoryDatabase[movieName]);
+                            try
+                            {
+                                System.Threading.Thread.CurrentThread.IsBackground = true;
+                                GlobalVariables.MainWindow.UpdateEntryToFile(movieName, GlobalVariables.MemoryDatabase[movieName]);
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Write(Log.LogMsgType.I, ex.ToString());
+                            }
                         }).Start();
                     }
                     else
@@ -227,10 +254,16 @@ namespace MovieSelector
 
                         new System.Threading.Thread(() =>
                         {
-                            System.Threading.Thread.CurrentThread.IsBackground = true;
-                            GlobalVariables.MemoryDatabase.Add(movieName, movieDataObj);
-                            GlobalVariables.MainWindow.AppendEntryToFile(movieName, movieDataObj);
-                            //GlobalVariables.XmlMovieDoc.Save(GlobalPath.MOVIE_DATABASE_PATH);
+                            try
+                            {
+                                System.Threading.Thread.CurrentThread.IsBackground = true;
+                                GlobalVariables.MemoryDatabase.Add(movieName, movieDataObj);
+                                GlobalVariables.MainWindow.AppendEntryToFile(movieName, movieDataObj);
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Write(Log.LogMsgType.I, ex.ToString());
+                            }
                         }).Start();
                     }
 
@@ -245,6 +278,8 @@ namespace MovieSelector
                 {
                     new System.Threading.Thread(() =>
                     {
+                      try
+                      {
                         System.Threading.Thread.CurrentThread.IsBackground = true;
                         if (newImageFilePath == refreshedAndIMDBNoImage)
                         {
@@ -267,6 +302,11 @@ namespace MovieSelector
                                 GlobalVariables.MainWindow.DisplayMovieData(movieName);
                             }
                         }));
+                      }
+                      catch (Exception ex)
+                      {
+                        Log.Write(Log.LogMsgType.I, ex.ToString());
+                      }
                     }).Start();
                 }
 
