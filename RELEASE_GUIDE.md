@@ -55,13 +55,16 @@ If something misbehaves, look in `MovieSelector\bin\Release\Log\` — every erro
 | File | Ship it? | Why |
 |---|---|---|
 | `MCS.exe` | **Yes** | The application. |
-| `MCS.exe.config` | **Yes** | Holds the Newtonsoft.Json binding redirect. Without it the app can fail to start with a `FileLoadException`. |
+| `MCS.exe.config` | Yes | Holds the Newtonsoft.Json binding redirect. Tested: the app *does* run without it when the matching DLL is present, so it is not strictly required today — ship it anyway so any future configuration takes effect. |
 | `Newtonsoft.Json.dll` | **Yes** | JSON library. **The exe will not run without it.** |
 | `MCS.pdb` | No | Debug symbols. Only useful for debugging with line numbers. |
 | `Newtonsoft.Json.xml` | No | IntelliSense documentation for developers. Never read at runtime. |
 | `Database\` `Posters\` `Log\` | No | Your own data. The app creates empty ones on first run. |
 
-> **The single most important rule:** `MCS.exe` and `Newtonsoft.Json.dll` must always be updated **together**. Copying just the exe over an old install is what caused the app to crash on 30 Aug 2026 — the new exe requires Newtonsoft 13.0.1 and the old folder still had 12.0.2.
+> **The single most important rule:** `MCS.exe` and `Newtonsoft.Json.dll` must always be updated
+> **together**. The exe records the exact Newtonsoft version it needs. Up to v4.1.5 it asked for
+> `12.0.0.0`; it now asks for `13.0.0.0`. Copying only the exe over an install still holding the
+> old DLL is what crashed the app on 30 Aug 2026.
 
 The release workflow packages exactly the three files above, so if you use Part 4 you get this right automatically.
 
@@ -71,14 +74,43 @@ The release workflow packages exactly the three files above, so if you use Part 
 
 Your install lives at `Y:\Movies & Dramas\Movies\Movie Selector\`.
 
+> ### Never copy the whole `bin\Release\` folder over your installation
+>
+> The moment you test-run `bin\Release\MCS.exe`, it creates its own **empty** `Database\`,
+> `Posters\` and `Log\` folders right there. Copying the folder wholesale overwrites your real
+> `Movie_Database.xml` and `Gui_Options.xml` with those empty ones — your entire catalogue and
+> your OMDb key, gone, with no error message and nothing in the log. This is exactly how ~385
+> entries were destroyed on 30 Aug 2026.
+>
+> **Copy the three files individually. Never the folder.**
+
 1. Close MCS if it is running.
-2. Copy **all three** files from `MovieSelector\bin\Release\` into that folder, overwriting:
+2. Copy **exactly these three files** from `MovieSelector\bin\Release\` into that folder, overwriting:
    - `MCS.exe`
    - `MCS.exe.config`
    - `Newtonsoft.Json.dll`
 3. Start MCS.
 
-Do **not** delete `Database\`, `Posters\` or `Gui_Options.xml` — that is your catalogue and your settings, including your OMDb key.
+Never copy over, or delete, `Database\`, `Posters\` or `Log\` — that is your catalogue, your
+posters and your settings, including your OMDb key.
+
+A safe one-liner (run in PowerShell; adjust the source path if your clone is elsewhere):
+
+```powershell
+$src = "C:\GitHub\MovieCatelogSoftware\MovieSelector\bin\Release"
+$dst = "Y:\Movies & Dramas\Movies\Movie Selector"
+Copy-Item "$src\MCS.exe","$src\MCS.exe.config","$src\Newtonsoft.Json.dll" -Destination $dst -Force
+```
+
+### If your catalogue does get wiped
+
+The app keeps `Database\Movie_Database.backup.xml`, refreshed on every startup that successfully
+loads at least one entry. A database with no entries can never overwrite that backup. To restore:
+close MCS, rename `Movie_Database.xml` out of the way, copy `Movie_Database.backup.xml` to
+`Movie_Database.xml`, and start MCS.
+
+The app also no longer discards an unreadable database. If it cannot parse one, it renames it to
+`Movie_Database.xml.kept-<timestamp>` and notes the name in the log, rather than replacing it.
 
 ---
 

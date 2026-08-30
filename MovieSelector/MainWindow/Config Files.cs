@@ -58,10 +58,34 @@ namespace MovieSelector
             }
         }
 
+        //True when the file on disk actually holds catalogue entries, as opposed to being
+        //absent or an empty shell.
+        private static bool databaseFileHasEntries(string path)
+        {
+            try
+            {
+                return File.Exists(path) && File.ReadAllText(path).Contains("<Movie>");
+            }
+            catch (Exception)
+            {
+                //Unreadable counts as "has entries" - err towards preserving it.
+                return File.Exists(path);
+            }
+        }
+
         private void recreateMovieDatabaseFile()
         {
             try
             {
+                //Never silently replace a database that still holds entries. Keep it aside so
+                //a bad load, or a file copied over the top, stays recoverable.
+                if (databaseFileHasEntries(GlobalPath.MOVIE_DATABASE_PATH) == true)
+                {
+                    string keptAside = GlobalPath.MOVIE_DATABASE_PATH + ".kept-" + DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                    File.Move(GlobalPath.MOVIE_DATABASE_PATH, keptAside);
+                    Log.Write(Log.LogMsgType.I, "Existing database could not be used; kept as " + keptAside);
+                }
+
                 using (XmlWriter writer = XmlWriter.Create(GlobalPath.MOVIE_DATABASE_PATH))
                 {
                     writer.WriteStartDocument();
@@ -234,6 +258,20 @@ namespace MovieSelector
                     if (movieDataObj.ImdbID == "")
                     {
                         moviesWithNoIDDetected = true;
+                    }
+                }
+
+                //Keep one generation of backup. Guarded on Count > 0 so an empty or freshly
+                //created database can never overwrite a good backup.
+                if (xmlMovieList.Count > 0)
+                {
+                    try
+                    {
+                        File.Copy(GlobalPath.MOVIE_DATABASE_PATH, GlobalPath.MOVIE_DATABASE_BACKUP_PATH, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Write(Log.LogMsgType.I, "Could not write database backup: " + ex.Message);
                     }
                 }
             }

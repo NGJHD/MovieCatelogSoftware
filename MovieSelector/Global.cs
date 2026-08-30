@@ -8,6 +8,7 @@ namespace MovieSelector
     public static class GlobalPath
     {
         public static string MOVIE_DATABASE_PATH = "Database\\Movie_Database.xml";
+        public static string MOVIE_DATABASE_BACKUP_PATH = "Database\\Movie_Database.backup.xml";
         public static string GUI_OPTIONS_PATH = "Database\\Gui_Options.xml";
         public static string MOVIE_POSTER_FOLDER_PATH = "Posters\\";
         public static string LOG_PATH = "Log\\";
