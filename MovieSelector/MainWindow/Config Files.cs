@@ -41,6 +41,8 @@ namespace MovieSelector
                     writer.WriteStartDocument();
                     writer.WriteStartElement("MovieSelector");
 
+                    writer.WriteElementString("OmdbApiKey", IMDB_Scraper.IMDB.ApiKey ?? "");
+
                     foreach (string dirPath in GlobalPath.MOVIE_LOCATION_LIST)
                     {
                         writer.WriteElementString("DefaultMoviesLoc", dirPath);
@@ -86,6 +88,9 @@ namespace MovieSelector
                 //Load the config file
                 XmlDocument xmlSettingsDoc = loadSettings_LoadConfigFile();
 
+                //Read the OMDb key before anything can try to scrape
+                loadSettings_ReadApiKey(xmlSettingsDoc);
+
                 //Read the config file movie location
                 loadSettings_ReadMovieLocations(xmlSettingsDoc);
 
@@ -130,6 +135,21 @@ namespace MovieSelector
             }
 
             return xmlSettingsDoc;
+        }
+
+        private void loadSettings_ReadApiKey(XmlDocument xmlSettingsDoc)
+        {
+            try
+            {
+                XmlNode node = xmlSettingsDoc.SelectSingleNode("MovieSelector/OmdbApiKey");
+                IMDB_Scraper.IMDB.ApiKey = (node == null ? "" : node.InnerText.Trim());
+
+                apiKeyTB.Text = IMDB_Scraper.IMDB.ApiKey;
+            }
+            catch (Exception ex)
+            {
+                Log.Write(Log.LogMsgType.I, ex.Message);
+            }
         }
 
         private void loadSettings_ReadMovieLocations(XmlDocument xmlSettingsDoc)

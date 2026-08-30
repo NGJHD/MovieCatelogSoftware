@@ -23,7 +23,7 @@ Movie details come from [OMDb](https://www.omdbapi.com/), which requires a key. 
 2. Activate it from the email OMDb sends you.
 3. Open **Options** in the app (the gear icon), paste the key into **OMDb API Key**, and press **SAVE**.
 
-The key is stored per Windows user under `%LOCALAPPDATA%`, not in this folder and not in this repository. Without a key the catalogue still lists your files, but no ratings, plots or posters can be fetched.
+The key is stored in `Database\Gui_Options.xml` inside the app's own folder, so it travels with the installation and survives version upgrades. It is never committed to this repository. Without a key the catalogue still lists your files, but no ratings, plots or posters can be fetched.
 
 ### Point it at your movies
 
@@ -64,7 +64,9 @@ git tag v4.1.5
 git push origin v4.1.5
 ```
 
-The release workflow builds, checks the tag against the built `MCS.exe` version (and fails if they disagree), zips the output, and attaches it to a new GitHub Release.
+The release workflow builds, checks the tag against the built `MCS.exe` version (and fails if they disagree), zips `MCS.exe`, `MCS.exe.config` and `Newtonsoft.Json.dll`, and attaches them to a new GitHub Release.
+
+Step-by-step instructions, including which files to copy when updating an existing installation, are in [RELEASE_GUIDE.md](RELEASE_GUIDE.md).
 
 ## License
 

@@ -42,7 +42,21 @@ jobs:
       - name: Package
         shell: pwsh
         run: |
-          Compress-Archive -Path "MovieSelector/bin/Release/*" -DestinationPath "MCS-${{ github.ref_name }}.zip"
+          # Ship only what the app needs to run. MCS.pdb is debug symbols and
+          # Newtonsoft.Json.xml is IntelliSense documentation; neither is used at runtime.
+          # Database/, Posters/ and Log/ are user data the app creates on first run.
+          $files = @(
+            "MovieSelector/bin/Release/MCS.exe",
+            "MovieSelector/bin/Release/MCS.exe.config",
+            "MovieSelector/bin/Release/Newtonsoft.Json.dll"
+          )
+          foreach ($f in $files) {
+            if (-not (Test-Path $f)) { throw "Missing expected release file: $f" }
+          }
+          Compress-Archive -Path $files -DestinationPath "MCS-${{ github.ref_name }}.zip"
+          Write-Host "Packaged:"
+          Expand-Archive "MCS-${{ github.ref_name }}.zip" -DestinationPath "$env:TEMP\zipcheck" -Force
+          Get-ChildItem "$env:TEMP\zipcheck" | Select-Object Name, Length | Format-Table
 
       - name: Publish the release
         uses: softprops/action-gh-release@v2

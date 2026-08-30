@@ -20,9 +20,6 @@ namespace MovieSelector
             GlobalPath.CheckDirectory();
             GlobalVariables.MainWindow = this;
 
-            //Needs to happen before any scraping thread starts
-            loadApiKey();
-
             autoSelectSelectBoxFirstItemTimer.Interval = TimeSpan.FromMilliseconds(500);
             autoSelectSelectBoxFirstItemTimer.Tick += new EventHandler(autoSelectSelectBoxFirstItemTimer_Tick);
 

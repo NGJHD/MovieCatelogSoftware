@@ -3,9 +3,5 @@
   <Profiles>
     <Profile Name="(Default)" />
   </Profiles>
-  <Settings>
-    <Setting Name="OmdbApiKey" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-  </Settings>
+  <Settings />
 </SettingsFile>
