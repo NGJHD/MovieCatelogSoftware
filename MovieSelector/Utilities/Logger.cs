@@ -36,7 +36,7 @@ namespace MovieSelector
                         functionName = stackFrames[1].GetMethod().Name;
                     }
 
-                    File.AppendAllText(GlobalPath.LOG_PATH + "\\" + GlobalPath.LOG_FILENAME + ".log",
+                    File.AppendAllText(Path.Combine(GlobalPath.LOG_PATH, GlobalPath.LOG_FILENAME + ".log"),
                                        "[" + logMsgType.ToString() + "]" +
                                        "[" + DateTime.Now.ToString("yyyyMMdd HHmmssfff") + "]" +
                                        "[" + functionName.PadRight(100) + "]" +

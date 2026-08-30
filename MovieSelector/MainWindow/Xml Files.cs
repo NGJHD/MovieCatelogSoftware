@@ -50,7 +50,6 @@ namespace MovieSelector
 
                     GlobalVariables.XmlMovieDoc.SelectSingleNode("IMDB_Database").AppendChild(xmlMovie);
                     saveXMLTimer.Start();
-                    //GlobalVariables.XmlMovieDoc.Save(GlobalPath.MOVIE_DATABASE_PATH);
                 }
                 catch (Exception ex)
                 {

@@ -642,6 +642,8 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
@@ -880,8 +882,55 @@
 
                     <Border Grid.Row="6" Style="{StaticResource SeperatorBorderStyle}" />
 
-                    <!--  Notification Center  -->
+                    <!--  OMDb API Key  -->
                     <Grid Grid.Row="7"
+                          Margin="24,12,24,12"
+                          HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock FontSize="28"
+                                       Foreground="White"
+                                       Text="OMDb API Key" />
+                            <TextBlock FontSize="16"
+                                       Foreground="White"
+                                       Opacity="0.54"
+                                       Text="Free key from omdbapi.com/apikey.aspx" />
+                        </StackPanel>
+
+                        <TextBox Name="apiKeyTB"
+                                 Grid.Column="1"
+                                 Height="50"
+                                 Margin="24,0,12,0"
+                                 VerticalContentAlignment="Center"
+                                 Background="#171d24"
+                                 BorderThickness="0"
+                                 FontSize="24"
+                                 Foreground="White" />
+
+                        <local:ClickGrid Grid.Column="2"
+                                         Width="180"
+                                         Height="60"
+                                         Background="#303c4a"
+                                         Click="saveApiKeyGrid_Click">
+                            <TextBlock Margin="0,0,0,5"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontSize="28"
+                                       FontWeight="SemiBold"
+                                       Foreground="White"
+                                       Text="SAVE" />
+                        </local:ClickGrid>
+                    </Grid>
+
+                    <Border Grid.Row="8" Style="{StaticResource SeperatorBorderStyle}" />
+
+                    <!--  Notification Center  -->
+                    <Grid Grid.Row="9"
                           Margin="24,12,24,12"
                           Background="#171d24">
                         <TextBlock HorizontalAlignment="Center"
@@ -902,7 +951,7 @@
                                  VerticalScrollBarVisibility="Auto" />
                     </Grid>
 
-                    <Border Grid.Row="8"
+                    <Border Grid.Row="10"
                             Margin="24,6,24,24"
                             Style="{StaticResource SeperatorBorderStyle}" />
                 </Grid>

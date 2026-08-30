@@ -1,0 +1,51 @@
+name: Release
+
+# Push a tag matching the AssemblyVersion in MovieSelector/Properties/AssemblyInfo.cs:
+#   git tag v4.1.5 && git push origin v4.1.5
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Set up NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Restore packages
+        run: nuget restore MovieSelector.sln
+
+      - name: Build (Release)
+        run: msbuild MovieSelector.sln /t:Rebuild /p:Configuration=Release /p:Platform="Any CPU" /verbosity:minimal
+
+      - name: Check the tag matches AssemblyVersion
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}".TrimStart("v")
+          $exe = Get-Item "MovieSelector/bin/Release/MCS.exe"
+          $built = $exe.VersionInfo.FileVersion
+          Write-Host "tag=$tag  built=$built"
+          if (-not $built.StartsWith($tag)) {
+            throw "Tag $tag does not match AssemblyVersion $built. Update Properties/AssemblyInfo.cs, or retag."
+          }
+
+      - name: Package
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "MovieSelector/bin/Release/*" -DestinationPath "MCS-${{ github.ref_name }}.zip"
+
+      - name: Publish the release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: MCS-${{ github.ref_name }}.zip
+          generate_release_notes: true

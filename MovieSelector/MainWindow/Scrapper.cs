@@ -19,7 +19,7 @@ namespace MovieSelector
 
         private int threadCount = 0;
 /*************************************************************************************************************************************/
-        private void startScrapper()
+        private void startScrapper(System.Threading.CancellationToken token)
         {
             try
             {
@@ -32,10 +32,18 @@ namespace MovieSelector
                 //Loop through all the movies
                 for (int i = 0; i < totalCount; i++)
                 {
+                    if (token.IsCancellationRequested == true)
+                    {
+                        return;
+                    }
+
                     //Max of 5 threads for stability
                     while (threadCount >= 5)
                     {
-                        System.Threading.Thread.Sleep(500);
+                        if (GlobalVariables.SleepUnlessCancelled(token, 500) == false)
+                        {
+                            return;
+                        }
                     }
 
                     //Add to the thread count immediately when entering
@@ -65,10 +73,9 @@ namespace MovieSelector
                             int currIdx = i;
 
                             //Start the scrapper details thread
-                            System.Threading.Thread grabDetailsFromIMDBThread = new Thread(() => getInfoFromIMDB(movieName, currIdx));
+                            System.Threading.Thread grabDetailsFromIMDBThread = new Thread(() => getInfoFromIMDB(movieName, currIdx, token));
                             grabDetailsFromIMDBThread.IsBackground = true;
                             grabDetailsFromIMDBThread.Start();
-                            GlobalVariables.ListOfRunningThreads.Add(grabDetailsFromIMDBThread);
                         }
                         else
                         {
@@ -82,7 +89,10 @@ namespace MovieSelector
 
                 while (threadCount > 0)
                 {
-                    System.Threading.Thread.Sleep(500);
+                    if (GlobalVariables.SleepUnlessCancelled(token, 500) == false)
+                    {
+                        return;
+                    }
                 }
 
                 //GlobalVariables.XmlMovieDoc.Save(GlobalPath.MOVIE_DATABASE_PATH);
@@ -98,7 +108,7 @@ namespace MovieSelector
             }
         }
 
-        private void getInfoFromIMDB(string movieName, int i)
+        private void getInfoFromIMDB(string movieName, int i, System.Threading.CancellationToken token)
         {
             bool fail = false;
 
@@ -106,6 +116,11 @@ namespace MovieSelector
             {
                 //Get info from IMDB
                 IMDB imdb = new IMDB(movieName);
+
+                if (token.IsCancellationRequested == true)
+                {
+                    return;
+                }
 
                 //If the rating is null, means the movie does not exist in IMDB! Rating is always available
                 if (String.IsNullOrWhiteSpace(imdb.Rating) == false)
@@ -139,23 +154,28 @@ namespace MovieSelector
                 GlobalVariables.FailedToGetFromIMDBLIST.Add(movieName);
                 fail = true;
             }
-
-            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
+            finally
             {
-                //Refresh the movie data if it's currently selected
-                if (i == movieLB.SelectedIndex)
+                if (token.IsCancellationRequested == false)
                 {
-                    DisplayMovieData(movieName);
+                    Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
+                    {
+                        //Refresh the movie data if it's currently selected
+                        if (i == movieLB.SelectedIndex)
+                        {
+                            DisplayMovieData(movieName);
+                        }
+
+                        //Refresh the small entry in the listbox
+                        RefreshEntryInListBox(RefreshType.TEXT_AND_IMAGE, i);
+
+                        //Inform the user
+                        AddToNotification("Fetching " + movieName + "'s data from IMDB... " + (fail == false ? "SUCCESS" : "FAILED"));
+                    }));
                 }
 
-                //Refresh the small entry in the listbox
-                RefreshEntryInListBox(RefreshType.TEXT_AND_IMAGE, i);
-
-                //Inform the user
-                AddToNotification("Fetching " + movieName + "'s data from IMDB... " + (fail == false ? "SUCCESS" : "FAILED"));
-            }));
-
-            threadCount--;
+                threadCount--;
+            }
         }
 
         public void DownloadPoster(string url, string movieName)

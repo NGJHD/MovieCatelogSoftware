@@ -32,7 +32,7 @@ namespace MovieSelector
         {
             try
             {
-                killAllRunningthreads();
+                cancelAllRunningWork();
                 needScrapper = false;
                 movieLB.Items.Clear();
                 listOfFiles.Clear();
@@ -52,25 +52,35 @@ namespace MovieSelector
                 //Select the first movie that's visible
                 selectFirstVisibleMovie();
                 
+                //Capture the token here, so a thread that starts after the next cancel still sees it
+                System.Threading.CancellationToken workToken = GlobalVariables.WorkToken;
+
                 //Start image loading
-                System.Threading.Thread imageLoadingThread = new Thread(imageLoadingFn);
+                System.Threading.Thread imageLoadingThread = new Thread(() => imageLoadingFn(workToken));
                 imageLoadingThread.IsBackground = true;
                 imageLoadingThread.Start();
-                GlobalVariables.ListOfRunningThreads.Add(imageLoadingThread);
 
                 //If data for a movie cannot be found, start the scrapper
-                if (needScrapper == true)
+                if ((needScrapper == true || needRatingScrapper == true) && IMDB_Scraper.IMDB.IsApiKeyConfigured == false)
                 {
-                    AddToNotification("Movies w/o data or rating detected. Fetching data from IMDB...");
-
-                    System.Threading.Thread scrapperThread = new Thread(startScrapper);
-                    scrapperThread.IsBackground = true;
-                    scrapperThread.Start();
-                    GlobalVariables.ListOfRunningThreads.Add(scrapperThread);
+                    //Nothing can be fetched without a key, so ask for one instead of failing every movie
+                    AddToNotification("No OMDb API key set. Add one under Options to fetch movie details.");
+                    showOptions();
                 }
-                if (needRatingScrapper == true)
+                else
                 {
-                    RefreshRatings(-1, true);
+                    if (needScrapper == true)
+                    {
+                        AddToNotification("Movies w/o data or rating detected. Fetching data from IMDB...");
+
+                        System.Threading.Thread scrapperThread = new Thread(() => startScrapper(workToken));
+                        scrapperThread.IsBackground = true;
+                        scrapperThread.Start();
+                    }
+                    if (needRatingScrapper == true)
+                    {
+                        RefreshRatings(-1, true);
+                    }
                 }
 
                 movieLB.Focus();
@@ -296,7 +306,7 @@ namespace MovieSelector
             }
         }
 /*************************************************************************************************************************************/        
-        private void imageLoadingFn()
+        private void imageLoadingFn(System.Threading.CancellationToken token)
         {
             try
             {
@@ -304,10 +314,18 @@ namespace MovieSelector
 
                 for (int i = 0; i < totalCount; i++)
                 {
+                    if (token.IsCancellationRequested == true)
+                    {
+                        return;
+                    }
+
                     currentImageLoadingThreadCount++;
                     while (currentImageLoadingThreadCount > maxImageLoadingThreadCount)
                     {
-                        System.Threading.Thread.Sleep(250);
+                        if (GlobalVariables.SleepUnlessCancelled(token, 250) == false)
+                        {
+                            return;
+                        }
                     }
 
                     Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
@@ -315,9 +333,6 @@ namespace MovieSelector
                         RefreshEntryInListBox(RefreshType.IMAGE, i);
                     }));
                 }
-            }
-            catch (ThreadAbortException)
-            {
             }
             catch (Exception ex)
             {
@@ -412,7 +427,6 @@ namespace MovieSelector
                 Thread displayMovieDataThread = new Thread(() => DisplayMovieData(movieName));
                 displayMovieDataThread.IsBackground = true;
                 displayMovieDataThread.Start();
-                GlobalVariables.ListOfRunningThreads.Add(displayMovieDataThread);
             }
             catch (Exception ex)
             {

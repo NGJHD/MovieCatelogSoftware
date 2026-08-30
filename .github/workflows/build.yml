@@ -1,0 +1,35 @@
+name: Build
+
+# Builds from a clean clone, so a reference that only resolves on one machine fails here.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Set up NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Restore packages
+        run: nuget restore MovieSelector.sln
+
+      - name: Build (Release)
+        run: msbuild MovieSelector.sln /t:Rebuild /p:Configuration=Release /p:Platform="Any CPU" /verbosity:minimal
+
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: MCS-release-build
+          path: MovieSelector/bin/Release/
+          retention-days: 7

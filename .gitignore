@@ -1,4 +1,37 @@
+# Visual Studio
 .vs/
-MovieSelector/obj/
-MovieSelector/bin/*
-!MovieSelector/bin/Debug/MCS.exe
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build output
+[Bb]in/
+[Oo]bj/
+publish/
+
+# NuGet packages are restored, not committed (packages.config stays tracked)
+packages/
+*.nupkg
+
+# Signing certificates - never commit private keys
+*.pfx
+*.snk
+*.p12
+
+# Data the app writes next to its own executable
+Database/
+Posters/
+Log/
+
+# Media files, including the zero-byte fixtures used to test the catalogue
+*.mkv
+*.mp4
+*.avi
+*.mov
+*.m4v
+*.wmv
+*.mpg
+*.mpeg
+*.webm
+*.iso

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace MovieSelector
+﻿namespace MovieSelector
 {
     public class MovieDataClass
     {

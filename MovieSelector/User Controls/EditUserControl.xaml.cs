@@ -270,25 +270,6 @@ namespace MovieSelector
                     }).Start();
                 }
 
-                /*if (refreshTriggered == true)
-                {
-                    new System.Threading.Thread(() =>
-                    {
-                        GlobalVariables.MainWindow.DownloadPoster(imdb.PosterLarge, movieName);
-
-                        //Load the image in the listbox
-                        Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
-                        {
-                            GlobalVariables.MainWindow.RefreshEntryInListBox(MainWindow.RefreshType.IMAGE, GlobalVariables.MainWindow.movieLB.SelectedIndex);
-
-                            if (GlobalVariables.MainWindow.titleTextBlock.Text == movieName)
-                            {
-                                GlobalVariables.MainWindow.DisplayMovieData(movieName);
-                            }
-                        }));
-                    }).Start();
-                }*/
-
                 //Hide this editing overlay
                 this.Visibility = Visibility.Hidden;
             }
@@ -300,15 +281,22 @@ namespace MovieSelector
 
         private void changeImageGrid_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();
-            ofd.DefaultExt = "jpg";
-            ofd.Filter = "jpg (*.jpg)|";
-
-            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            try
             {
-                string filepath = ofd.FileName;
-                posterImage.Source = HelperClass.BitmapImageFromFile(filepath);
-                newImageFilePath = filepath;                
+                System.Windows.Forms.OpenFileDialog ofd = new System.Windows.Forms.OpenFileDialog();
+                ofd.DefaultExt = "jpg";
+                ofd.Filter = "jpg (*.jpg)|*.jpg";
+
+                if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    string filepath = ofd.FileName;
+                    posterImage.Source = HelperClass.BitmapImageFromFile(filepath);
+                    newImageFilePath = filepath;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(Log.LogMsgType.I, ex.Message);
             }
         }
     }

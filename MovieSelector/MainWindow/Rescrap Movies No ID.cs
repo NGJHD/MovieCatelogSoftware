@@ -7,7 +7,8 @@ namespace MovieSelector
 {
     public partial class MainWindow : System.Windows.Window
     {
-        private List<System.Threading.Thread> fetchMovieNoIDThreadList = new List<System.Threading.Thread>();
+        //Cancels a previous re-fetch without disturbing the other background work.
+        private System.Threading.CancellationTokenSource fetchMovieNoIDCancellationSource = new System.Threading.CancellationTokenSource();
         private int fetchMovieNoIDThreadCount = 0;
 
         private void RescrapMoviesWithNoIDGrid_Click(object sender, EventArgs e)
@@ -19,15 +20,14 @@ namespace MovieSelector
                 //Get the total number of movies in order to iterate without touching the UI thread 
                 int totalCount = movieLB.Items.Count;
 
-                foreach (System.Threading.Thread th in fetchMovieNoIDThreadList)
-                {
-                    if (th != null && th.IsAlive == true)
-                    {
-                        th.Abort();
-                    }
-                }
-                fetchMovieNoIDThreadList.Clear();
+                //Stop the previous re-fetch before starting another
+                fetchMovieNoIDCancellationSource.Cancel();
+                fetchMovieNoIDCancellationSource = new System.Threading.CancellationTokenSource();
                 fetchMovieNoIDThreadCount = 0;
+
+                //Capture both tokens now: the feature one, and the global one used on close/list refresh
+                System.Threading.CancellationToken fetchToken = fetchMovieNoIDCancellationSource.Token;
+                System.Threading.CancellationToken workToken = GlobalVariables.WorkToken;
 
                 //Hide the Options Grid and other UI
                 hideOptions();
@@ -36,11 +36,9 @@ namespace MovieSelector
                 moviesWithNoIDOptionBorder.Visibility = Visibility.Collapsed;
 
                 //Start the scrapper
-                System.Threading.Thread fetchMovieNoIDThread = new System.Threading.Thread(() => fetchMovieNoIDFn(totalCount));
+                System.Threading.Thread fetchMovieNoIDThread = new System.Threading.Thread(() => fetchMovieNoIDFn(totalCount, fetchToken, workToken));
                 fetchMovieNoIDThread.IsBackground = true;
                 fetchMovieNoIDThread.Start();
-                GlobalVariables.ListOfRunningThreads.Add(fetchMovieNoIDThread);
-                fetchMovieNoIDThreadList.Add(fetchMovieNoIDThread);
             }
             catch (Exception ex)
             {
@@ -48,17 +46,38 @@ namespace MovieSelector
             }
         }
 
-        private void fetchMovieNoIDFn(int totalCount)
+        private static bool isFetchCancelled(System.Threading.CancellationToken fetchToken, System.Threading.CancellationToken workToken)
+        {
+            return fetchToken.IsCancellationRequested || workToken.IsCancellationRequested;
+        }
+
+        //Returns false once the caller should stop.
+        private static bool sleepUnlessFetchCancelled(System.Threading.CancellationToken fetchToken, System.Threading.CancellationToken workToken, int milliseconds)
+        {
+            return System.Threading.WaitHandle.WaitAny(
+                       new System.Threading.WaitHandle[] { fetchToken.WaitHandle, workToken.WaitHandle },
+                       milliseconds) == System.Threading.WaitHandle.WaitTimeout;
+        }
+
+        private void fetchMovieNoIDFn(int totalCount, System.Threading.CancellationToken fetchToken, System.Threading.CancellationToken workToken)
         {
             try
             {
                 //Loop through all the movies
                 for (int i = 0; i < totalCount; i++)
                 {
+                    if (isFetchCancelled(fetchToken, workToken) == true)
+                    {
+                        return;
+                    }
+
                     //Max of 5 threads for stability
                     while (fetchMovieNoIDThreadCount >= 5)
                     {
-                        System.Threading.Thread.Sleep(500);
+                        if (sleepUnlessFetchCancelled(fetchToken, workToken, 500) == false)
+                        {
+                            return;
+                        }
                     }
 
                     //Add to the thread count immediately when entering
@@ -75,11 +94,9 @@ namespace MovieSelector
                     {
                         int currIdx = i;
 
-                        System.Threading.Thread fetchDetailsThread = new System.Threading.Thread(() => fetchDetailsFromIMDB(movieName, currIdx));
+                        System.Threading.Thread fetchDetailsThread = new System.Threading.Thread(() => fetchDetailsFromIMDB(movieName, currIdx, fetchToken, workToken));
                         fetchDetailsThread.IsBackground = true;
                         fetchDetailsThread.Start();
-                        GlobalVariables.ListOfRunningThreads.Add(fetchDetailsThread);
-                        fetchMovieNoIDThreadList.Add(fetchDetailsThread);
                     }
                     else
                     {
@@ -89,10 +106,11 @@ namespace MovieSelector
 
                 while (fetchMovieNoIDThreadCount > 0)
                 {
-                    System.Threading.Thread.Sleep(500);
+                    if (sleepUnlessFetchCancelled(fetchToken, workToken, 500) == false)
+                    {
+                        return;
+                    }
                 }
-
-                fetchMovieNoIDThreadList.Clear();
 
                 Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
                 {
@@ -106,12 +124,17 @@ namespace MovieSelector
             }
         }
 
-        private void fetchDetailsFromIMDB(string movieName, int i)
+        private void fetchDetailsFromIMDB(string movieName, int i, System.Threading.CancellationToken fetchToken, System.Threading.CancellationToken workToken)
         {
             try
             {
-                //Fetch from imdb                        
+                //Fetch from imdb
                 IMDB imdb = new IMDB(movieName);
+
+                if (isFetchCancelled(fetchToken, workToken) == true)
+                {
+                    return;
+                }
 
                 //Check if parsed successfully. Rating is a field that always exists in IMDB.
                 if (String.IsNullOrWhiteSpace(imdb.Rating) == false)

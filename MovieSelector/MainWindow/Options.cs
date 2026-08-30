@@ -27,6 +27,40 @@ namespace MovieSelector
             }
         }
 
+        //The OMDb key is per user and lives in the user settings, never in the repo. See README.
+        private void loadApiKey()
+        {
+            try
+            {
+                IMDB_Scraper.IMDB.ApiKey = Properties.Settings.Default.OmdbApiKey ?? "";
+                apiKeyTB.Text = IMDB_Scraper.IMDB.ApiKey;
+            }
+            catch (Exception ex)
+            {
+                Log.Write(Log.LogMsgType.I, ex.Message);
+            }
+        }
+
+        private void saveApiKeyGrid_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string key = apiKeyTB.Text.Trim();
+
+                Properties.Settings.Default.OmdbApiKey = key;
+                Properties.Settings.Default.Save();
+                IMDB_Scraper.IMDB.ApiKey = key;
+
+                AddToNotification(IMDB_Scraper.IMDB.IsApiKeyConfigured
+                                  ? "OMDb API key saved."
+                                  : "OMDb API key cleared. Movie details cannot be fetched without one.");
+            }
+            catch (Exception ex)
+            {
+                Log.Write(Log.LogMsgType.I, ex.Message);
+            }
+        }
+
         private void showOptions()
         {
             try

@@ -45,9 +45,32 @@ namespace MovieSelector
         public static MainWindow MainWindow;
         public static List<string> FailedToGetFromIMDBLIST = new List<string>();
 
-        public static List<System.Threading.Thread> ListOfRunningThreads = new List<System.Threading.Thread>();
-
         public static string ErrorIMDB = "Error fetching data from imdb";
+
+        //Background work is cancelled cooperatively. Thread.Abort could tear a thread down
+        //mid-XmlDocument-mutation or mid-file-write, and is unsupported outside .NET Framework.
+        private static System.Threading.CancellationTokenSource workCancellationSource = new System.Threading.CancellationTokenSource();
+
+        //Capture this at the point a worker thread is CREATED, not inside its body - a thread that
+        //starts after a cancel would otherwise pick up the fresh token and keep running.
+        public static System.Threading.CancellationToken WorkToken
+        {
+            get { return workCancellationSource.Token; }
+        }
+
+        //Signal every running worker to stop, then arm a fresh token for the work that follows.
+        public static void CancelAllWork()
+        {
+            System.Threading.CancellationTokenSource previous = workCancellationSource;
+            workCancellationSource = new System.Threading.CancellationTokenSource();
+            previous.Cancel();
+        }
+
+        //Sleep that gives up early when cancelled. Returns false once the caller should stop.
+        public static bool SleepUnlessCancelled(System.Threading.CancellationToken token, int milliseconds)
+        {
+            return token.WaitHandle.WaitOne(milliseconds) == false;
+        }
     }
 /**************************************************************************************************/
 }

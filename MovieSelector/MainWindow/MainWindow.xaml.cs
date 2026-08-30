@@ -20,6 +20,9 @@ namespace MovieSelector
             GlobalPath.CheckDirectory();
             GlobalVariables.MainWindow = this;
 
+            //Needs to happen before any scraping thread starts
+            loadApiKey();
+
             autoSelectSelectBoxFirstItemTimer.Interval = TimeSpan.FromMilliseconds(500);
             autoSelectSelectBoxFirstItemTimer.Tick += new EventHandler(autoSelectSelectBoxFirstItemTimer_Tick);
 
@@ -52,29 +55,14 @@ namespace MovieSelector
 /*************************************************************************************************************************************/
         private void MovieSelectorWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            killAllRunningthreads();
+            cancelAllRunningWork();
         }
 
-        private void killAllRunningthreads()
+        private void cancelAllRunningWork()
         {
             try
             {
-                foreach (System.Threading.Thread th in GlobalVariables.ListOfRunningThreads)
-                {
-                    try
-                    {
-                        if (th.IsAlive == true)
-                        {
-                            th.Abort();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Write(Log.LogMsgType.I, ex.Message);
-                    }
-                }
-
-                GlobalVariables.ListOfRunningThreads.Clear();
+                GlobalVariables.CancelAllWork();
             }
             catch (Exception ex)
             {

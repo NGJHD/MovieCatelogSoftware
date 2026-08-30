@@ -1,61 +1,67 @@
-﻿using System;
+using System;
 using System.Linq;
-using System.Collections;
 using System.Net;
-using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Net.Http;
-using System.Threading.Tasks;
-using System.Security.Policy;
-
 
 namespace IMDB_Scraper
 {
     public class IMDB
     {
-/*************************************************************************************************************************************/        
+/*************************************************************************************************************************************/
         public string Id { get; set; }
         public string Rating { get; set; }
         public string Plot { get; set; }
         public string Poster { get; set; }
-        public string PosterLarge { get; set; }        
+        public string PosterLarge { get; set; }
         public string Tagline { get; set; }
 
         public string Genre { get; set; }
         public string Director { get; set; }
         public string Cast { get; set; }
 
+        //OMDb API key. Supplied by the user through Options - never hardcoded, see README.
+        public static string ApiKey = "";
+
+        public static bool IsApiKeyConfigured
+        {
+            get { return String.IsNullOrWhiteSpace(ApiKey) == false; }
+        }
+
         //Search Engine URLs
-        //private string GoogleSearch = "https://www.google.com/search?q=imdb+";
         private string DuckDuckGoSearch = "https://duckduckgo.com/?q=imdb+";
-        //private string BaiduSearch = "http://www.baidu.com/s?wd=imdb+";
-        //private string BingSearch = "http://www.bing.com/search?q=imdb+";
         private string YahooSearch = "https://search.yahoo.com/search?p=imdb+";
 
-        private string imdbMatchString = "https://www.imdb.com/title/tt";        
+        private string imdbMatchString = "https://www.imdb.com/title/tt";
 /*************************************************************************************************************************************/
-        private bool checkIfYear(string temp)
+        //A year in brackets is the reliable marker - "2012 (2009).mkv" is the 2009 film, not the 2012 one.
+        private static readonly Regex parenthesisedYearRegex = new Regex(@"\((19|20)\d{2}\)");
+
+        //Fallback: a bare 4 digit year standing on its own as a token.
+        private static readonly Regex bareYearRegex = new Regex(@"(?<=^|[\s._\-])(19|20)\d{2}(?=$|[\s._\-])");
+
+        private static readonly Regex whitespaceRegex = new Regex(@"\s+");
+
+        //Turn a file name into "title year" for the search engines.
+        private static string buildSearchTerm(string movieName)
         {
-            try
-            {
-                int i = Convert.ToInt32(temp);
+            string cleaned = movieName.Replace(".", " ").Replace("_", " ");
 
-                int count = 0;
-                do
+            Match yearMatch = parenthesisedYearRegex.Match(cleaned);
+            if (yearMatch.Success == false)
+            {
+                //Take the LAST bare year, so a title that opens with 4 digits is not mistaken for one.
+                MatchCollection bareYears = bareYearRegex.Matches(cleaned);
+                if (bareYears.Count > 0)
                 {
-                    count++;
-                } while ((i /= 10) >= 1);
+                    yearMatch = bareYears[bareYears.Count - 1];
+                }
+            }
 
-                if (count == 4)
-                    return true;
-                else
-                    return false;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            string title = yearMatch.Success ? cleaned.Substring(0, yearMatch.Index) : cleaned;
+            string year = yearMatch.Success ? yearMatch.Value.Trim('(', ')') : "";
+
+            return whitespaceRegex.Replace((title + " " + year).Trim(), " ");
         }
 
         //Constructor
@@ -67,24 +73,7 @@ namespace IMDB_Scraper
             }
             else
             {
-                string tempMovieName = MovieName.Replace(".", " ").Replace("_", " ");
-                string[] tempArray = tempMovieName.Split(' ');
-
-                MovieName = "";
-                foreach (string temp in tempArray)
-                {
-                    if (checkIfYear(temp) == true)
-                    {
-                        //MovieName += "(" + temp + ")";
-                        MovieName += temp;
-                        break;
-                    }
-                    else
-                        MovieName += temp + " ";
-                }
-
-                //string imdbUrl = getIMDbUrl(System.Uri.EscapeUriString(MovieName));
-                string imdbUrl = getIMDbUrl(System.Uri.EscapeUriString(MovieName.Replace("&", "")).Replace("(", " ").Replace(")", " "));
+                string imdbUrl = getIMDbUrl(buildSearchTerm(MovieName));
 
                 if (!string.IsNullOrEmpty(imdbUrl))
                 {
@@ -110,23 +99,25 @@ namespace IMDB_Scraper
 
             return newStr;
         }
- 
+
         //Get IMDB URL from search results
         private string getIMDbUrl(string MovieName, string searchEngine = "yahoo")
         {
             string url = "";
-            string searchMovieName = MovieName.Replace('(', '+').Replace(")", "").Replace(' ', '+').Replace('-', '+').Replace('.', '+');
-            
-            if (searchEngine.ToLower().Equals("yahoo")) 
+            string searchMovieName = Uri.EscapeDataString(
+                                         whitespaceRegex.Replace(
+                                             MovieName.Replace("&", " ").Replace("(", " ").Replace(")", " ").Replace("-", " "),
+                                             " ").Trim())
+                                        .Replace("%20", "+");
+
+            if (searchEngine.ToLower().Equals("yahoo"))
                 url = YahooSearch + searchMovieName;
             else if (searchEngine.ToLower().Equals("duckduckgo"))
                 url = DuckDuckGoSearch + searchMovieName;
 
             string html = System.Net.WebUtility.UrlDecode(getUrlData(url));
 
-            //ArrayList imdbUrls = matchAll(@"<a href=""(http://www.imdb.com/title/tt\d{7}/)"".*?>.*?</a>", html);
-            
-            string imdbURL = "";            
+            string imdbURL = "";
             if (html.Contains(imdbMatchString) == true)
             {
                 imdbURL = removeLastNonDigit(html.Substring(html.IndexOf(imdbMatchString), imdbMatchString.Count() + 10));
@@ -145,28 +136,22 @@ namespace IMDB_Scraper
                 }
             }
 
-            //if (imdbUrls.Count > 0)
             if (String.IsNullOrWhiteSpace(imdbURL) == false)
             {
-                return imdbURL;// (string)imdbUrls[0]; //return first IMDB result
+                return imdbURL; //return first IMDB result
             }
             else if (searchEngine == "yahoo") //if Yahoo search fails
             {
                 System.Threading.Thread.Sleep(300);
                 return getIMDbUrl(MovieName, "duckduckgo"); //search using DuckDuckGo
-            }            
+            }
             else //search fails
                 return string.Empty;
         }
- 
+
         //Parse IMDB page data
         private void parseIMDbPage(string imdbUrl)
         {
-            //string html = getUrlData(imdbUrl+"combined");
-            //string html = getUrlData(imdbUrl + "/reference/");
-
-            //Id = match(@"<link rel=""canonical"" href=""http://www.imdb.com/title/(tt\d{7})/combined"" />", html);
-            //Id = match(@"<link rel=""canonical"" href=""https://www.imdb.com/title/(tt\d{7})/reference"" />", html);
             if (imdbUrl.Contains("https") == true)
             {
                 Id = imdbUrl.Replace(imdbMatchString, "tt");
@@ -176,12 +161,25 @@ namespace IMDB_Scraper
                 Id = imdbUrl.Replace(imdbMatchString.Replace("https", "http"), "tt");
             }
 
+            //No key means no lookup - the caller reports this as a failed fetch.
+            if (IsApiKeyConfigured == false)
+            {
+                return;
+            }
+
             if (!string.IsNullOrEmpty(Id))
             {
-                string url = $"https://www.omdbapi.com/?i={Id}&plot=full&apikey=REDACTED-ROTATED-KEY";
+                string url = $"https://www.omdbapi.com/?i={Id}&plot=full&apikey={Uri.EscapeDataString(ApiKey)}";
 
                 string json = getUrlData(url);
                 dynamic data = Newtonsoft.Json.JsonConvert.DeserializeObject(json);
+
+                //OMDb answers a bad key or unknown id with Response=False, not an HTTP error.
+                string response = data?.Response?.ToString();
+                if (String.Equals(response, "False", StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    return;
+                }
 
                 // Rating
                 Rating = data.imdbRating?.ToString() ?? string.Empty;
@@ -217,67 +215,14 @@ namespace IMDB_Scraper
                     Poster = string.Empty;
                     PosterLarge = string.Empty;
                 }
-
-                /*Rating = match(@"""ipc-rating-star--rating"">(.*?)</span>", html);                
-
-                string plotSummaryHTML = getUrlData(imdbUrl + "/plotsummary/");
-                Plot = System.Net.WebUtility.HtmlDecode(Regex.Replace(match(@"ipc-html-content-inner-div.*?ipc-html-content-inner-div.*?>(.*?)</div>", plotSummaryHTML), "<.*?>", String.Empty)); ;
-                Tagline = System.Net.WebUtility.HtmlDecode(match(@"<li[^>]*data-testid=""storyline-taglines""[^>]*>.*?<span[^>]*ipc-metadata-list-item__list-content-item[^>]*>(.*?)</span></li>", html));
-
-                ArrayList genres = matchAll(@"<a[^>]*>(.*?)</a>", match(@">Genres</span>(.*?)</ul>", html));
-                for (int j = 0; j < genres.Count; j++)
-                {
-                    Genre += genres[j] + (j == genres.Count - 1 ? "" : ", ");
-                }
-
-                Director = match(@"Directed by (.*?)\.", html);
-
-                ArrayList cast = matchAll(@"<a[^>]*>(.*?)</a>", match(@">Stars</a>(.*?)</ul>", html));
-                for (int j = 0; j < cast.Count; j++)
-                {
-                    Cast += cast[j] + (j == cast.Count - 1 ? "" : ", ");
-                }
-                
-                Poster = match(@"<div[^>]*class=""[^""]*ipc-poster__poster-image[^""]*""[^>]*>.*?<img[^>]*src=""(https:\/\/m\.media-amazon\.com\/images\/[^""]+)""", html);
-                if (!string.IsNullOrEmpty(Poster))
-                {
-                    Poster = Regex.Replace(Poster, @"_V1.*?.jpg", "_V1._SY200.jpg");
-                    PosterLarge = Regex.Replace(Poster, @"_V1.*?.jpg", "_V1._SY500.jpg");                    
-                }
-                else
-                {
-                    Poster = string.Empty;
-                    PosterLarge = string.Empty;                    
-                }                                */
-            } 
-        }
-/*************************************************************************************************************************************/  
-        //Match single instance
-        private string match(string regex, string html, int i = 1)
-        {
-            return new Regex(regex, RegexOptions.Multiline).Match(html).Groups[i].Value.Trim();
-        }
- 
-        //Match all instances and return as ArrayList
-        private ArrayList matchAll(string regex, string html, int i = 1)
-        {
-            ArrayList list = new ArrayList();
-            foreach (Match m in new Regex(regex, RegexOptions.Multiline).Matches(html))
-            {
-                list.Add(m.Groups[i].Value.Trim());
             }
-
-            return list;
         }
+/*************************************************************************************************************************************/
+        //One client for the whole process - a client per request leaks sockets into TIME_WAIT.
+        private static readonly HttpClient httpClient = createHttpClient();
 
-        //Get URL Data
-        private string getUrlData(string url)
+        private static HttpClient createHttpClient()
         {
-            // Set global connection limit for the server
-            var sp = ServicePointManager.FindServicePoint(new Uri(url));
-            sp.ConnectionLimit = 20; 
-
-            // Use HttpClientHandler for automatic decompression
             var handler = new HttpClientHandler
             {
                 AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
@@ -285,74 +230,31 @@ namespace IMDB_Scraper
                 AllowAutoRedirect = true
             };
 
-            using (var client = new HttpClient(handler))
-            {
-                // Browser-like headers
-                client.DefaultRequestHeaders.Add("User-Agent",
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36");
-                client.DefaultRequestHeaders.Add("Accept",
-                    "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-                client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.9");
-                client.DefaultRequestHeaders.Add("Connection", "keep-alive");
-                client.DefaultRequestHeaders.Add("Upgrade-Insecure-Requests", "1");
+            var client = new HttpClient(handler);
+            client.Timeout = TimeSpan.FromSeconds(30);
 
-                // Synchronous call
-                return client.GetStringAsync(url).GetAwaiter().GetResult();
-            }
+            // Browser-like headers
+            client.DefaultRequestHeaders.Add("User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36");
+            client.DefaultRequestHeaders.Add("Accept",
+                "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+            client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.9");
+            client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+            client.DefaultRequestHeaders.Add("Upgrade-Insecure-Requests", "1");
+
+            return client;
         }
-        /*private string getUrlData(string url)
+
+        //Get URL Data
+        private string getUrlData(string url)
         {
-            ExtendedWebClient client = new ExtendedWebClient();
+            // Set the connection limit for this server
+            var sp = ServicePointManager.FindServicePoint(new Uri(url));
+            sp.ConnectionLimit = 20;
 
-            client.Headers.Add("User-Agent: Lynx/2.9.2 libwww-FM/2.14 SSL-MM/1.4.1 OpenSSL/3.4.0");
-            //client.Headers.Add("User-Agent: Mozilla / 5.0(Windows NT 10.0; Win64; x64) AppleWebKit / 537.36(KHTML, like Gecko) Chrome / 140.0.0.0 Safari / 537.36");
-            
-            string html = "";
-            using (Stream datastream = client.OpenRead(url))
-            {                
-                using (StreamReader reader = new StreamReader(datastream))
-                {
-                    StringBuilder sb = new StringBuilder();
-                    while (!reader.EndOfStream)
-                        sb.Append(reader.ReadLine());
-
-                    html = sb.ToString();
-                }
-            }
-
-            return html;
-        }*/
+            // Synchronous call
+            return httpClient.GetStringAsync(url).GetAwaiter().GetResult();
+        }
         /*************************************************************************************************************************************/
     }
-
-    /*public class ExtendedWebClient : WebClient
-    {
-        /// <summary>
-        /// Gets or sets the maximum number of concurrent connections (default is 2).
-        /// </summary>
-        public int ConnectionLimit { get; set; }
-
-        /// <summary>
-        /// Creates a new instance of ExtendedWebClient.
-        /// </summary>
-        public ExtendedWebClient()
-        {
-            this.ConnectionLimit = 20;
-        }
-
-        /// <summary>
-        /// Creates the request for this client and sets connection defaults.
-        /// </summary>
-        protected override WebRequest GetWebRequest(Uri address)
-        {
-            var request = base.GetWebRequest(address) as HttpWebRequest;
-
-            if (request != null)
-            {
-                request.ServicePoint.ConnectionLimit = this.ConnectionLimit;
-            }
-
-            return request;
-        }
-    }*/
 }

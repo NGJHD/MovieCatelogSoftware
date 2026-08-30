@@ -9,7 +9,8 @@ namespace MovieSelector
     public partial class MainWindow : System.Windows.Window
     {
 /*************************************************************************************************************************************/
-        private List<System.Threading.Thread> refreshRatingThreadList = new List<System.Threading.Thread>();
+        //Cancels a previous rating refresh without disturbing the other background work.
+        private System.Threading.CancellationTokenSource refreshRatingCancellationSource = new System.Threading.CancellationTokenSource();
         private int refreshThreadCount = 0;
 /*************************************************************************************************************************************/
         private void RefreshLast10RatingsGrid_Click(object sender, EventArgs e)
@@ -59,20 +60,18 @@ namespace MovieSelector
                 
 
                 int totalCount = Math.Min(movieLB.Items.Count, (last == -1 ? movieLB.Items.Count : last));
-                foreach (System.Threading.Thread th in refreshRatingThreadList)
-                {
-                    if (th != null && th.IsAlive == true)
-                    {
-                        th.Abort();
-                    }
-                }
-                refreshRatingThreadList.Clear();
 
-                System.Threading.Thread refreshRatingThread = new System.Threading.Thread(() => refreshRatingFn(totalCount, onlyWithUnknownRating));
+                //Stop the previous refresh before starting another
+                refreshRatingCancellationSource.Cancel();
+                refreshRatingCancellationSource = new System.Threading.CancellationTokenSource();
+
+                //Capture both tokens now: the feature one, and the global one used on close/list refresh
+                System.Threading.CancellationToken refreshToken = refreshRatingCancellationSource.Token;
+                System.Threading.CancellationToken workToken = GlobalVariables.WorkToken;
+
+                System.Threading.Thread refreshRatingThread = new System.Threading.Thread(() => refreshRatingFn(totalCount, onlyWithUnknownRating, refreshToken, workToken));
                 refreshRatingThread.IsBackground = true;
                 refreshRatingThread.Start();
-                GlobalVariables.ListOfRunningThreads.Add(refreshRatingThread);
-                refreshRatingThreadList.Add(refreshRatingThread);
 
                 hideOptions();
             }
@@ -82,7 +81,7 @@ namespace MovieSelector
             }
         }
 /*************************************************************************************************************************************/
-        private void refreshRatingFn(int totalCount, bool onlyWithUnknownRating)
+        private void refreshRatingFn(int totalCount, bool onlyWithUnknownRating, System.Threading.CancellationToken refreshToken, System.Threading.CancellationToken workToken)
         {
             try
             {
@@ -100,35 +99,50 @@ namespace MovieSelector
                 //Loop through all the movies
                 for (int i = 0; i < totalCount; i++)
                 {
-                    //Max of 5 threads for stability
-                    while (refreshThreadCount > 5)
+                    if (isRefreshCancelled(refreshToken, workToken) == true)
                     {
-                        System.Threading.Thread.Sleep(500);
+                        return;
                     }
 
-                    if (onlyWithUnknownRating == false || GlobalVariables.MemoryDatabase[listOfMovieNames[i]].Rating == "?")
+                    //Max of 5 threads for stability
+                    while (refreshThreadCount >= 5)
+                    {
+                        if (sleepUnlessRefreshCancelled(refreshToken, workToken, 500) == false)
+                        {
+                            return;
+                        }
+                    }
+
+                    //A movie that has not been scrapped yet simply has no entry - skip it rather than
+                    //letting the missing key throw and abandon every remaining movie in the list.
+                    MovieDataClass movieData;
+                    if (GlobalVariables.MemoryDatabase.TryGetValue(listOfMovieNames[i], out movieData) == false)
+                    {
+                        continue;
+                    }
+
+                    if (onlyWithUnknownRating == false || movieData.Rating == "?")
                     {
                         //Add to the thread count immediately when entering
                         refreshThreadCount++;
 
                         int temp = i;
 
-                        System.Threading.Thread fetchRatingThread = new System.Threading.Thread(() => fetchRatingFromIMDB(temp));
+                        System.Threading.Thread fetchRatingThread = new System.Threading.Thread(() => fetchRatingFromIMDB(temp, refreshToken, workToken));
                         fetchRatingThread.IsBackground = true;
                         fetchRatingThread.Start();
-                        GlobalVariables.ListOfRunningThreads.Add(fetchRatingThread);
-                        refreshRatingThreadList.Add(fetchRatingThread);
                     }
                 }
 
                 while (refreshThreadCount != 0)
                 {
-                    System.Threading.Thread.Sleep(500);
+                    if (sleepUnlessRefreshCancelled(refreshToken, workToken, 500) == false)
+                    {
+                        return;
+                    }
                 }
 
                 saveXMLTimer.Start();
-                //GlobalVariables.XmlMovieDoc.Save(GlobalPath.MOVIE_DATABASE_PATH);
-                refreshRatingThreadList.Clear();
 
                 if (onlyWithUnknownRating == false)
                 {
@@ -144,7 +158,20 @@ namespace MovieSelector
             }
         }
 
-        private void fetchRatingFromIMDB(int i)
+        private static bool isRefreshCancelled(System.Threading.CancellationToken refreshToken, System.Threading.CancellationToken workToken)
+        {
+            return refreshToken.IsCancellationRequested || workToken.IsCancellationRequested;
+        }
+
+        //Returns false once the caller should stop.
+        private static bool sleepUnlessRefreshCancelled(System.Threading.CancellationToken refreshToken, System.Threading.CancellationToken workToken, int milliseconds)
+        {
+            return System.Threading.WaitHandle.WaitAny(
+                       new System.Threading.WaitHandle[] { refreshToken.WaitHandle, workToken.WaitHandle },
+                       milliseconds) == System.Threading.WaitHandle.WaitTimeout;
+        }
+
+        private void fetchRatingFromIMDB(int i, System.Threading.CancellationToken refreshToken, System.Threading.CancellationToken workToken)
         {
             try
             {
@@ -158,6 +185,11 @@ namespace MovieSelector
                 {
                     //Fetch from imdb
                     IMDB imdb = new IMDB(@"https://www.imdb.com/title/" + GlobalVariables.MemoryDatabase[movieName].ImdbID, true);
+
+                    if (isRefreshCancelled(refreshToken, workToken) == true)
+                    {
+                        return;
+                    }
 
                     //Check if parsed successfully. Rating is a field that always exists in IMDB.
                     if (String.IsNullOrWhiteSpace(imdb.Rating) == false )
