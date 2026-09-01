@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -6,6 +6,13 @@ using System.Net.Http;
 
 namespace IMDB_Scraper
 {
+    //OMDb refused the request outright - a bad key, or the daily quota is spent. Distinct from
+    //a network blip so the caller can tell the user something useful instead of just "FAILED".
+    public class OmdbApiException : Exception
+    {
+        public OmdbApiException(string message) : base(message) { }
+    }
+
     public class IMDB
     {
 /*************************************************************************************************************************************/
@@ -20,8 +27,12 @@ namespace IMDB_Scraper
         public string Director { get; set; }
         public string Cast { get; set; }
 
-        //OMDb API key. Supplied by the user through Options - never hardcoded, see README.
-        public static string ApiKey = "";
+        //Shared fallback key so the app works out of the box. It is one free 1,000/day
+        //allowance across everybody who never sets their own, so it runs out - see README.
+        public const string DefaultApiKey = "99d6ab33";
+
+        //The key actually used. Set from Options; falls back to the shared one above.
+        public static string ApiKey = DefaultApiKey;
 
         public static bool IsApiKeyConfigured
         {
@@ -245,6 +256,10 @@ namespace IMDB_Scraper
             return client;
         }
 
+        //Yahoo throttles scraped searches hard - it answers 5xx once a burst gets going. A
+        //couple of spaced retries turns most of those from a lost movie into a slow one.
+        private const int maxAttempts = 3;
+
         //Get URL Data
         private string getUrlData(string url)
         {
@@ -252,8 +267,77 @@ namespace IMDB_Scraper
             var sp = ServicePointManager.FindServicePoint(new Uri(url));
             sp.ConnectionLimit = 20;
 
-            // Synchronous call
-            return httpClient.GetStringAsync(url).GetAwaiter().GetResult();
+            Exception lastError = null;
+
+            for (int attempt = 1; attempt <= maxAttempts; attempt++)
+            {
+                try
+                {
+                    using (HttpResponseMessage response = httpClient.GetAsync(url).GetAwaiter().GetResult())
+                    {
+                        string body = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+                        if (response.IsSuccessStatusCode == true)
+                        {
+                            return body;
+                        }
+
+                        //OMDb reports a bad key or an exhausted quota as 401 with the reason in
+                        //the body. Retrying cannot help, so surface it and stop.
+                        if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            throw new OmdbApiException(extractOmdbError(body));
+                        }
+
+                        //429 and 5xx are the throttling responses - worth another go.
+                        if ((int)response.StatusCode == 429 || (int)response.StatusCode >= 500)
+                        {
+                            lastError = new HttpRequestException("HTTP " + (int)response.StatusCode);
+                        }
+                        else
+                        {
+                            throw new HttpRequestException("HTTP " + (int)response.StatusCode);
+                        }
+                    }
+                }
+                catch (OmdbApiException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    lastError = ex;
+                }
+
+                if (attempt < maxAttempts)
+                {
+                    //1s then 3s. Long enough for a throttle window to lift, short enough to
+                    //not stall the queue.
+                    System.Threading.Thread.Sleep(attempt == 1 ? 1000 : 3000);
+                }
+            }
+
+            throw lastError ?? new HttpRequestException("Request failed: " + url);
+        }
+
+        //Pull the human readable reason out of an OMDb refusal body.
+        private static string extractOmdbError(string body)
+        {
+            try
+            {
+                dynamic parsed = Newtonsoft.Json.JsonConvert.DeserializeObject(body);
+                string error = parsed?.Error?.ToString();
+
+                if (String.IsNullOrWhiteSpace(error) == false)
+                {
+                    return error;
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            return "OMDb refused the request.";
         }
         /*************************************************************************************************************************************/
     }

@@ -23,7 +23,6 @@ namespace MovieSelector
                 //Stop the previous re-fetch before starting another
                 fetchMovieNoIDCancellationSource.Cancel();
                 fetchMovieNoIDCancellationSource = new System.Threading.CancellationTokenSource();
-                fetchMovieNoIDThreadCount = 0;
 
                 //Capture both tokens now: the feature one, and the global one used on close/list refresh
                 System.Threading.CancellationToken fetchToken = fetchMovieNoIDCancellationSource.Token;
@@ -81,7 +80,7 @@ namespace MovieSelector
                     }
 
                     //Add to the thread count immediately when entering
-                    fetchMovieNoIDThreadCount++;
+                    System.Threading.Interlocked.Increment(ref fetchMovieNoIDThreadCount);
 
                     string movieName = "";
 
@@ -100,7 +99,7 @@ namespace MovieSelector
                     }
                     else
                     {
-                        fetchMovieNoIDThreadCount--;
+                        System.Threading.Interlocked.Decrement(ref fetchMovieNoIDThreadCount);
                     }
                 }
 
@@ -128,7 +127,7 @@ namespace MovieSelector
         {
             try
             {
-                //Fetch from imdb
+                //Fetch from omdb
                 IMDB imdb = new IMDB(movieName);
 
                 if (isFetchCancelled(fetchToken, workToken) == true)
@@ -150,27 +149,28 @@ namespace MovieSelector
                     Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
                     {
                         //Refresh the small entry in the listbox
-                        RefreshEntryInListBox(RefreshType.TEXT, i);
+                        RefreshEntryInListBox(RefreshType.TEXT, movieName);
 
                         //Redisplay the movie data if it's currently selected
-                        if (i == movieLB.SelectedIndex)
+                        if (IsMovieSelected(movieName) == true)
                         {
                             DisplayMovieData(movieName);
                         }
 
                         //Inform user
-                        AddToNotification("Re-fetched " + movieName + "'s details from imdb");
+                        AddToNotification("Re-fetched " + movieName + "'s details from omdb");
                     }));
 
                     GlobalVariables.MainWindow.UpdateEntryToFile(movieName, GlobalVariables.MemoryDatabase[movieName]);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ReportOmdbProblem(ex);
             }
             finally
             {
-                fetchMovieNoIDThreadCount--;
+                System.Threading.Interlocked.Decrement(ref fetchMovieNoIDThreadCount);
             }
         }
 /*************************************************************************************************************************************/

@@ -50,13 +50,13 @@ If something misbehaves, look in `MovieSelector\bin\Release\Log\` — every erro
 
 ## Part 2 — Which files actually ship
 
-`bin\Release\` contains more than you need. Only these three go out:
+`bin\Release\` contains more than you need. Only these **two** go out:
 
 | File | Ship it? | Why |
 |---|---|---|
 | `MCS.exe` | **Yes** | The application. |
-| `MCS.exe.config` | Yes | Holds the Newtonsoft.Json binding redirect. Tested: the app *does* run without it when the matching DLL is present, so it is not strictly required today — ship it anyway so any future configuration takes effect. |
 | `Newtonsoft.Json.dll` | **Yes** | JSON library. **The exe will not run without it.** |
+| `MCS.exe.config` | No | Carries no setting the app depends on. Verified: it runs fine without it. |
 | `MCS.pdb` | No | Debug symbols. Only useful for debugging with line numbers. |
 | `Newtonsoft.Json.xml` | No | IntelliSense documentation for developers. Never read at runtime. |
 | `Database\` `Posters\` `Log\` | No | Your own data. The app creates empty ones on first run. |
@@ -66,7 +66,7 @@ If something misbehaves, look in `MovieSelector\bin\Release\Log\` — every erro
 > `12.0.0.0`; it now asks for `13.0.0.0`. Copying only the exe over an install still holding the
 > old DLL is what crashed the app on 30 Aug 2026.
 
-The release workflow packages exactly the three files above, so if you use Part 4 you get this right automatically.
+The release workflow packages exactly the two files above, so if you use Part 4 you get this right automatically.
 
 ---
 
@@ -84,33 +84,23 @@ Your install lives at `Y:\Movies & Dramas\Movies\Movie Selector\`.
 >
 > **Copy the three files individually. Never the folder.**
 
+**The easy way:** double-click **`COPY TO NETWORK.bat`** in the repository root. It copies the two
+files, refuses to run if MCS is still open or the Y: drive is unreachable, and never touches your
+`Database\`, `Posters\` or `Log\` folders.
+
+By hand:
+
 1. Close MCS if it is running.
-2. Copy **exactly these three files** from `MovieSelector\bin\Release\` into that folder, overwriting:
+2. Copy **exactly these two files** from `MovieSelector\bin\Release\` into that folder, overwriting:
    - `MCS.exe`
-   - `MCS.exe.config`
    - `Newtonsoft.Json.dll`
 3. Start MCS.
 
 Never copy over, or delete, `Database\`, `Posters\` or `Log\` — that is your catalogue, your
 posters and your settings, including your OMDb key.
 
-A safe one-liner (run in PowerShell; adjust the source path if your clone is elsewhere):
-
-```powershell
-$src = "C:\GitHub\MovieCatelogSoftware\MovieSelector\bin\Release"
-$dst = "Y:\Movies & Dramas\Movies\Movie Selector"
-Copy-Item "$src\MCS.exe","$src\MCS.exe.config","$src\Newtonsoft.Json.dll" -Destination $dst -Force
-```
-
-### If your catalogue does get wiped
-
-The app keeps `Database\Movie_Database.backup.xml`, refreshed on every startup that successfully
-loads at least one entry. A database with no entries can never overwrite that backup. To restore:
-close MCS, rename `Movie_Database.xml` out of the way, copy `Movie_Database.backup.xml` to
-`Movie_Database.xml`, and start MCS.
-
-The app also no longer discards an unreadable database. If it cannot parse one, it renames it to
-`Movie_Database.xml.kept-<timestamp>` and notes the name in the log, rather than replacing it.
+> There is no automatic backup of `Movie_Database.xml`. If you want one, copy the `Database\`
+> folder somewhere safe before you experiment.
 
 ---
 
@@ -200,7 +190,8 @@ Go to the release on GitHub → **Delete**. Then delete the tag with the command
 ```
 # build            : Visual Studio -> Release -> Build -> Rebuild Solution
 # output           : MovieSelector\bin\Release\
-# ship             : MCS.exe + MCS.exe.config + Newtonsoft.Json.dll   (always all three)
+# ship             : MCS.exe + Newtonsoft.Json.dll        (always both, never one alone)
+# deploy to Y:      : double-click "COPY TO NETWORK.bat"
 # version file     : MovieSelector\Properties\AssemblyInfo.cs   (both Version lines)
 # publish          : git tag v<version> && git push origin v<version>
 # your OMDb key    : Database\Gui_Options.xml, in the install folder

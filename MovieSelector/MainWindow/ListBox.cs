@@ -71,7 +71,7 @@ namespace MovieSelector
                 {
                     if (needScrapper == true)
                     {
-                        AddToNotification("Movies w/o data or rating detected. Fetching data from IMDB...");
+                        AddToNotification("Movies w/o data or rating detected. Fetching data from OMDB...");
 
                         System.Threading.Thread scrapperThread = new Thread(() => startScrapper(workToken));
                         scrapperThread.IsBackground = true;
@@ -169,6 +169,55 @@ namespace MovieSelector
                             }
                         }
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(Log.LogMsgType.I, ex.Message);
+            }
+        }
+
+        //Re-order the existing entries in place. The MovieListBoxClass objects are reused, so
+        //posters already loaded stay loaded, and background work carries on untouched.
+        private void resortListOnly()
+        {
+            try
+            {
+                Dictionary<string, MovieListBoxClass> byLocation = new Dictionary<string, MovieListBoxClass>();
+
+                foreach (object item in movieLB.Items)
+                {
+                    MovieListBoxClass entry = item as MovieListBoxClass;
+
+                    if (entry != null && byLocation.ContainsKey(entry.movieLoc) == false)
+                    {
+                        byLocation.Add(entry.movieLoc, entry);
+                    }
+                }
+
+                MovieListBoxClass selected = movieLB.SelectedItem as MovieListBoxClass;
+
+                movieLB.Items.Clear();
+
+                foreach (FileInfo fi in refreshList_SortListByCondition())
+                {
+                    MovieListBoxClass entry;
+
+                    if (byLocation.TryGetValue(fi.FullName, out entry) == true)
+                    {
+                        movieLB.Items.Add(entry);
+                    }
+                }
+
+                //Keep the user on the movie they were looking at
+                if (selected != null && movieLB.Items.Contains(selected) == true)
+                {
+                    movieLB.SelectedItem = selected;
+                    movieLB.ScrollIntoView(selected);
+                }
+                else
+                {
+                    selectFirstVisibleMovie();
                 }
             }
             catch (Exception ex)
@@ -400,8 +449,9 @@ namespace MovieSelector
 
                 if (needRefresh == true && startup == false)
                 {
-                    loadSettings();
-                    refreshList();
+                    //Re-order the view only. Cancelling and restarting the scraper here meant it
+                    //began again from the first movie every time, so the tail was never reached.
+                    resortListOnly();
                 }
 
                 movieLB.Focus();
@@ -495,7 +545,7 @@ namespace MovieSelector
                 ratingTextBlock.Text = @"-/10";
                 taglineTextBlock.Text = "-";
                 posterImage.Source = null;
-                plotTextBlock.Text = (movieName == "-" ? "-" : (GlobalVariables.FailedToGetFromIMDBLIST.Contains(movieName) == true ? "Failed to retrieve data from IMDB" : "Fetching " + movieName + "'s data from IMDB..."));
+                plotTextBlock.Text = (movieName == "-" ? "-" : (GlobalVariables.HasFailedToGetFromIMDB(movieName) == true ? "Failed to retrieve data from OMDB" : "Fetching " + movieName + "'s data from OMDB..."));
             }
             catch (Exception ex)
             {

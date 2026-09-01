@@ -85,8 +85,6 @@ namespace MovieSelector
         {
             try
             {
-                refreshThreadCount = 0;
-
                 List<string> listOfMovieNames = new List<string>();
                 Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
                 {
@@ -124,7 +122,7 @@ namespace MovieSelector
                     if (onlyWithUnknownRating == false || movieData.Rating == "?")
                     {
                         //Add to the thread count immediately when entering
-                        refreshThreadCount++;
+                        System.Threading.Interlocked.Increment(ref refreshThreadCount);
 
                         int temp = i;
 
@@ -200,10 +198,10 @@ namespace MovieSelector
                             GlobalVariables.MemoryDatabase[movieName].Rating = imdb.Rating;
 
                             //Refresh the entry in the list box
-                            RefreshEntryInListBox(RefreshType.TEXT, i);
+                            RefreshEntryInListBox(RefreshType.TEXT, movieName);
 
                             //Refresh the movie data if it's currently selected
-                            if (i == movieLB.SelectedIndex)
+                            if (IsMovieSelected(movieName) == true)
                             {
                                 DisplayMovieData(movieName);
                             }
@@ -217,12 +215,13 @@ namespace MovieSelector
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ReportOmdbProblem(ex);
             }
             finally
             {
-                refreshThreadCount--;
+                System.Threading.Interlocked.Decrement(ref refreshThreadCount);
             }
         }
 

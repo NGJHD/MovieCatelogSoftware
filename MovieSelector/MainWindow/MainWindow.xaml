@@ -663,7 +663,7 @@
                         <TextBlock VerticalAlignment="Center"
                                    FontSize="28"
                                    Foreground="White"
-                                   Text="Movies with no ID detected. Re-fetch the affected movies's data from IMDB?" />
+                                   Text="Movies with no ID detected. Re-fetch the affected movies's data from OMDB?" />
 
                         <!--  Refresh All  -->
                         <local:ClickGrid Grid.Column="2"

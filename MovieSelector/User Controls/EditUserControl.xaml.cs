@@ -94,7 +94,7 @@ namespace MovieSelector
                   {
                     System.Threading.Thread.CurrentThread.IsBackground = true;
 
-                    //Fetch from imdb                        
+                    //Fetch from omdb                        
                     imdb = new IMDB(@"https://www.imdb.com/title/" + imdbID, true);
 
                     Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>

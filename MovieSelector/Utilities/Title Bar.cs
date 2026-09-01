@@ -21,7 +21,7 @@ namespace MovieSelector
 
                 MessageBox.Show($"Movie Catalogue Software v{version.Major}.{version.Minor}.{version.Build}\n" +
                                 "Written by: Darren Ng\n" +
-                                "Email: ng.jh.darren@outlook.com\n", "Info");
+                                "GitHub: https://github.com/NGJHD/MovieCatelogSoftware/releases\n", "Info");
             }
             catch (Exception ex)
             {

@@ -18,13 +18,35 @@ namespace MovieSelector
         }
 
         private int threadCount = 0;
+
+        //Only worth saying once per run, not once per movie.
+        private bool omdbProblemReported = false;
+
+        //Surface an OMDb refusal - a spent quota or a bad key - which otherwise looks
+        //identical to "this movie was not found".
+        public void ReportOmdbProblem(Exception ex)
+        {
+            IMDB_Scraper.OmdbApiException omdbError = ex as IMDB_Scraper.OmdbApiException;
+
+            if (omdbError == null || omdbProblemReported == true)
+            {
+                return;
+            }
+
+            omdbProblemReported = true;
+
+            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
+            {
+                AddToNotification("OMDb: " + omdbError.Message + " Enter your own key under Options.");
+            }));
+        }
 /*************************************************************************************************************************************/
         private void startScrapper(System.Threading.CancellationToken token)
         {
             try
             {
-                GlobalVariables.FailedToGetFromIMDBLIST.Clear();                
-                threadCount = 0;
+                GlobalVariables.ClearFailedToGetFromIMDB();
+                omdbProblemReported = false;
 
                 //Get the count of total number of movies so we know how many times to loop
                 int totalCount = Invoke_GetTotalMovieCount();
@@ -47,7 +69,7 @@ namespace MovieSelector
                     }
 
                     //Add to the thread count immediately when entering
-                    threadCount++;
+                    System.Threading.Interlocked.Increment(ref threadCount);
 
                     try
                     {
@@ -66,7 +88,7 @@ namespace MovieSelector
                             }
                         }));
 
-                        //Get the info from IMDB if it doesn't exist
+                        //Get the info from OMDB if it doesn't exist
                         if (getNameError == false && GlobalVariables.MemoryDatabase.ContainsKey(movieName) == false)
                         {
                             //Assign a local variable first, otherwise i will ++ before creating a new thread
@@ -79,7 +101,7 @@ namespace MovieSelector
                         }
                         else
                         {
-                            threadCount--;
+                            System.Threading.Interlocked.Decrement(ref threadCount);
                         }
                     }
                     catch (Exception)
@@ -100,7 +122,7 @@ namespace MovieSelector
                 //Scrapper ended, add to notiifcation
                 Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
                 {
-                    AddToNotification("Fetching data from IMDB completed for all movies.");
+                    AddToNotification("Fetching data from OMDB completed for all movies.");
                 }));
             }
             catch (Exception)
@@ -114,7 +136,7 @@ namespace MovieSelector
 
             try
             {
-                //Get info from IMDB
+                //Get info from OMDB
                 IMDB imdb = new IMDB(movieName);
 
                 if (token.IsCancellationRequested == true)
@@ -149,9 +171,10 @@ namespace MovieSelector
                     throw new Exception();
                 }                
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                GlobalVariables.FailedToGetFromIMDBLIST.Add(movieName);
+                ReportOmdbProblem(ex);
+                GlobalVariables.AddFailedToGetFromIMDB(movieName);
                 fail = true;
             }
             finally
@@ -161,20 +184,20 @@ namespace MovieSelector
                     Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
                     {
                         //Refresh the movie data if it's currently selected
-                        if (i == movieLB.SelectedIndex)
+                        if (IsMovieSelected(movieName) == true)
                         {
                             DisplayMovieData(movieName);
                         }
 
                         //Refresh the small entry in the listbox
-                        RefreshEntryInListBox(RefreshType.TEXT_AND_IMAGE, i);
+                        RefreshEntryInListBox(RefreshType.TEXT_AND_IMAGE, movieName);
 
                         //Inform the user
-                        AddToNotification("Fetching " + movieName + "'s data from IMDB... " + (fail == false ? "SUCCESS" : "FAILED"));
+                        AddToNotification("Fetching " + movieName + "'s data from OMDB... " + (fail == false ? "SUCCESS" : "FAILED"));
                     }));
                 }
 
-                threadCount--;
+                System.Threading.Interlocked.Decrement(ref threadCount);
             }
         }
 
@@ -196,10 +219,48 @@ namespace MovieSelector
             }
         }
 
+        //Index of a movie in the listbox as it is ordered right now, or -1 if it is gone.
+        public int IndexOfMovie(string movieName)
+        {
+            for (int i = 0; i < movieLB.Items.Count; i++)
+            {
+                MovieListBoxClass entry = movieLB.Items[i] as MovieListBoxClass;
+
+                if (entry != null && entry.movieName == movieName)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        public bool IsMovieSelected(string movieName)
+        {
+            MovieListBoxClass selected = movieLB.SelectedItem as MovieListBoxClass;
+            return selected != null && selected.movieName == movieName;
+        }
+
+        //Resolve the position at the moment of the refresh, so a re-sort in between is harmless.
+        public void RefreshEntryInListBox(RefreshType type, string movieName)
+        {
+            int i = IndexOfMovie(movieName);
+
+            if (i >= 0)
+            {
+                RefreshEntryInListBox(type, i);
+            }
+        }
+
         public void RefreshEntryInListBox(RefreshType type, int i)
         {
             try
             {
+                if (i < 0 || i >= movieLB.Items.Count)
+                {
+                    return;
+                }
+
                 string movieName = (movieLB.Items[i] as MovieListBoxClass).movieName;
 
                 if (type == RefreshType.TEXT || type == RefreshType.TEXT_AND_IMAGE)

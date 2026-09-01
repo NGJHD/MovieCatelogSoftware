@@ -12,7 +12,7 @@ namespace MovieSelector
             
             MovieDataClass movieDataObj = new MovieDataClass();
 
-            if (GlobalVariables.FailedToGetFromIMDBLIST.Contains(value.ToString()) == true)
+            if (GlobalVariables.HasFailedToGetFromIMDB(value.ToString()) == true)
             {
                 return "Failed";
             }

@@ -29,18 +29,28 @@ namespace MovieSelector
 
         //The OMDb key lives in Database\Gui_Options.xml next to the movie locations, so it
         //travels with the install folder and survives a version bump. Never in the repo.
+        //Empty means fall back to the shared default key built into the app.
+        private string storedApiKey = "";
+
+        private void applyApiKey()
+        {
+            IMDB_Scraper.IMDB.ApiKey = String.IsNullOrWhiteSpace(storedApiKey)
+                                       ? IMDB_Scraper.IMDB.DefaultApiKey
+                                       : storedApiKey;
+        }
+
         private void saveApiKeyGrid_Click(object sender, EventArgs e)
         {
             try
             {
-                string key = apiKeyTB.Text.Trim();
+                storedApiKey = apiKeyTB.Text.Trim();
 
-                IMDB_Scraper.IMDB.ApiKey = key;
+                applyApiKey();
                 recreateConfigFile();
 
-                AddToNotification(IMDB_Scraper.IMDB.IsApiKeyConfigured
-                                  ? "OMDb API key saved."
-                                  : "OMDb API key cleared. Movie details cannot be fetched without one.");
+                AddToNotification(String.IsNullOrWhiteSpace(storedApiKey)
+                                  ? "Using the shared default OMDb key. It is shared by everyone who has not set their own, so it runs out - get a free key at omdbapi.com."
+                                  : "OMDb API key saved.");
             }
             catch (Exception ex)
             {

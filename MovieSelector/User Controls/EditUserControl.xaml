@@ -243,7 +243,7 @@
                            VerticalAlignment="Center"
                            FontSize="48"
                            Foreground="White"
-                           Text="Fetching from IMDB...&#x0a;&#x0a;Please wait..."
+                           Text="Fetching from OMDB...&#x0a;&#x0a;Please wait..."
                            TextAlignment="Center"
                            TextWrapping="Wrap" />
             </Grid>

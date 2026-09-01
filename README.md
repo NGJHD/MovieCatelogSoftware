@@ -1,5 +1,20 @@
 # Movie Catelog Software
 
+> ## ⚠️ Please get your own free OMDb API key
+>
+> **MCS ships with a shared OMDb key so it works the moment you unzip it. That key is used by
+> everyone who never sets their own, so its 1,000 lookups a day get exhausted quickly — often
+> within minutes. When it runs out, fetching stops working for everybody until the next day.**
+>
+> **Getting your own takes about a minute and is free:**
+>
+> 1. **Request a key at <https://www.omdbapi.com/apikey.aspx> (select the FREE tier).**
+> 2. **Click the activation link OMDb emails you — the key does not work until you do.**
+> 3. **In MCS, open Options (the gear icon), paste it into "OMDb API Key", and press SAVE.**
+>
+> **A key of your own gives you your own 1,000 lookups a day, which is plenty for a large
+> library. Leave the box empty to go back to the shared key.**
+
 Sometimes, we rent/bought and ripped so much movies to store in our HDD that we have difficulty tracking what's what. Maybe you can remember what's each movie about, but not your family.
 
 So I wrote a lightweight software (it's just 800+ KB) for Windows some years back for my dad. It's a simple software that grabs the movie details from IMDB so that he can filter the nice ones to watch. I am aware that there are existing implementations in the market (namely kodi), but those are bloated, slow and not elderly friendly.
@@ -15,15 +30,18 @@ This is not a software to help you download movies. This is a software that help
 
 Grab the latest zip from [Releases](../../releases), unzip it anywhere, and run `MCS.exe`. Nothing is installed and nothing is written outside the folder you unzip into — the app keeps its database, posters and logs in `Database\`, `Posters\` and `Log\` next to the executable.
 
-### You need a free OMDb API key
+### The OMDb API key
 
-Movie details come from [OMDb](https://www.omdbapi.com/), which requires a key. The app ships without one, so the first thing to do is get your own:
+Movie details come from [OMDb](https://www.omdbapi.com/), which requires a key. A shared key is
+built in so the app works straight away, but see the notice at the top — it is shared, so it runs
+out. Setting your own is strongly recommended.
 
-1. Request a free key at <https://www.omdbapi.com/apikey.aspx> (the FREE tier allows 1,000 lookups per day).
-2. Activate it from the email OMDb sends you.
-3. Open **Options** in the app (the gear icon), paste the key into **OMDb API Key**, and press **SAVE**.
+Your key is stored in `Database\Gui_Options.xml` inside the app's own folder, so it travels with
+the installation and survives version upgrades. Leaving the field empty stores nothing and falls
+back to the shared key.
 
-The key is stored in `Database\Gui_Options.xml` inside the app's own folder, so it travels with the installation and survives version upgrades. It is never committed to this repository. Without a key the catalogue still lists your files, but no ratings, plots or posters can be fetched.
+If OMDb refuses a request — a spent quota or a bad key — the app now says so in the notification
+area instead of just reporting every movie as failed.
 
 ### Point it at your movies
 
@@ -64,7 +82,7 @@ git tag v4.1.5
 git push origin v4.1.5
 ```
 
-The release workflow builds, checks the tag against the built `MCS.exe` version (and fails if they disagree), zips `MCS.exe`, `MCS.exe.config` and `Newtonsoft.Json.dll`, and attaches them to a new GitHub Release.
+The release workflow builds, checks the tag against the built `MCS.exe` version (and fails if they disagree), zips `MCS.exe` and `Newtonsoft.Json.dll`, and attaches them to a new GitHub Release. Those two files are the whole application; they must always be updated together.
 
 Step-by-step instructions, including which files to copy when updating an existing installation, are in [RELEASE_GUIDE.md](RELEASE_GUIDE.md).
 

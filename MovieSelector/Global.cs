@@ -8,7 +8,6 @@ namespace MovieSelector
     public static class GlobalPath
     {
         public static string MOVIE_DATABASE_PATH = "Database\\Movie_Database.xml";
-        public static string MOVIE_DATABASE_BACKUP_PATH = "Database\\Movie_Database.backup.xml";
         public static string GUI_OPTIONS_PATH = "Database\\Gui_Options.xml";
         public static string MOVIE_POSTER_FOLDER_PATH = "Posters\\";
         public static string LOG_PATH = "Log\\";
@@ -44,9 +43,36 @@ namespace MovieSelector
         public static XmlDocument XmlMovieDoc = new XmlDocument();
         public static Dictionary<string, MovieDataClass> MemoryDatabase = new Dictionary<string, MovieDataClass>();
         public static MainWindow MainWindow;
-        public static List<string> FailedToGetFromIMDBLIST = new List<string>();
+        private static readonly List<string> failedToGetFromIMDB = new List<string>();
 
-        public static string ErrorIMDB = "Error fetching data from imdb";
+        public static void AddFailedToGetFromIMDB(string movieName)
+        {
+            lock (failedToGetFromIMDB)
+            {
+                if (failedToGetFromIMDB.Contains(movieName) == false)
+                {
+                    failedToGetFromIMDB.Add(movieName);
+                }
+            }
+        }
+
+        public static bool HasFailedToGetFromIMDB(string movieName)
+        {
+            lock (failedToGetFromIMDB)
+            {
+                return failedToGetFromIMDB.Contains(movieName);
+            }
+        }
+
+        public static void ClearFailedToGetFromIMDB()
+        {
+            lock (failedToGetFromIMDB)
+            {
+                failedToGetFromIMDB.Clear();
+            }
+        }
+
+        public static string ErrorIMDB = "Error fetching data from omdb";
 
         //Background work is cancelled cooperatively. Thread.Abort could tear a thread down
         //mid-XmlDocument-mutation or mid-file-write, and is unsupported outside .NET Framework.
