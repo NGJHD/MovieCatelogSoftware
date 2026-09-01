@@ -97,7 +97,10 @@ git push origin v4.1.5
 
 The release workflow builds, checks the tag against the built `MCS.exe` version (and fails if they disagree), zips `MCS.exe` and `Newtonsoft.Json.dll`, and attaches them to a new GitHub Release. Those two files are the whole application; they must always be updated together.
 
-Step-by-step instructions, including which files to copy when updating an existing installation, are in [RELEASE_GUIDE.md](RELEASE_GUIDE.md).
+To update an existing installation by hand, copy **only** those two files over it. Never copy the
+whole `bin\Release\` folder: test-running the build creates empty `Database\`, `Posters\` and
+`Log\` folders beside it, and copying the folder wholesale overwrites a real catalogue and OMDb
+key with those empty ones, silently. The in-app updater does this correctly on its own.
 
 ## License
 

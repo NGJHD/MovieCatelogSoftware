@@ -41,7 +41,7 @@ namespace MovieSelector
 
         //The two files a release ships. They are replaced together or not at all - the exe records
         //the exact Newtonsoft version it binds to, and shipping one without the other is what
-        //crashed the app on 30 Aug 2026. See RELEASE_GUIDE.md, Part 2.
+        //crashed the app on 30 Aug 2026.
         private const string exeName = "MCS.exe";
         private const string jsonDllName = "Newtonsoft.Json.dll";
 

@@ -36,6 +36,7 @@ Log/
 *.webm
 *.iso
 
-# Personal deployment script - points at one specific network share, so it is kept
-# locally rather than shipped to everyone who clones this.
+# Local-only notes and scripts. Both name one particular machine and network share,
+# so they stay on the machine that uses them rather than going out to everyone who clones.
 COPY TO NETWORK.bat
+RELEASE_GUIDE.md
