@@ -36,6 +36,10 @@ Movie details come from [OMDb](https://www.omdbapi.com/), which requires a key. 
 built in so the app works straight away, but see the notice at the top — it is shared, so it runs
 out. Setting your own is strongly recommended.
 
+A first scan of a large library costs more than one lookup per movie: a name OMDb cannot match
+directly is resolved through a web search and then verified, which spends several. The shared
+key's 1,000 a day does not go far against a few hundred films.
+
 Your key is stored in `Database\Gui_Options.xml` inside the app's own folder, so it travels with
 the installation and survives version upgrades. Leaving the field empty stores nothing and falls
 back to the shared key.
@@ -58,7 +62,31 @@ repository must be public for it to work, since the check is an anonymous GitHub
 
 ### Point it at your movies
 
-In **Options**, use the **+** button to add each folder holding your movie files. The app scans them, matches each file name against IMDB, and fills in the details. Names like `Inception (2010).mkv` or `Inception.2010.mkv` match best — a year in brackets is what the matcher trusts most.
+In **Options**, use the **+** button to add each folder holding your movie files. The app scans them, matches each file name against IMDB, and fills in the details.
+
+**Include the year.** It is what the matcher trusts most, and it doubles as the cut-off point for
+everything a release group appends, so all of these resolve to the same film:
+
+```
+Inception (2010).mkv
+Inception.2010.mkv
+Inception.2010.1080p.BluRay.x264-SPARKS.mkv
+```
+
+Without a year the name still works, but a film that shares its title with another is far more
+likely to come back wrong.
+
+A sequel numbered the way IMDB does not — `John Wick 3`, `Frozen 2`, `Mission Impossible 6` — is
+matched through a web search rather than directly, so it takes a little longer.
+
+**For a film named in another script, keep an English title in brackets:**
+
+```
+龙棺古墓 - 西夏狼王 (The Dragon Tomb - Ancient Legend) (2021)
+```
+
+Neither OMDb nor the search engines find anything from the original script alone, so a folder
+named only in Chinese, Japanese or Korean cannot be matched.
 
 ## Building from source
 
@@ -82,6 +110,10 @@ msbuild MovieSelector.sln /t:Rebuild /p:Configuration=Release
 The executable lands in `MovieSelector\bin\Release\MCS.exe`.
 
 Every push and pull request is built from a clean clone by [the build workflow](.github/workflows/build.yml), so a reference that only resolves on one machine fails CI rather than reaching you.
+
+Before changing how file names are matched to IMDB entries, read [DEBUG.md](DEBUG.md). It records
+what each rule in the matcher is defending against, with the wrong IDs that got written when the
+rule was not there.
 
 ## Releasing
 
