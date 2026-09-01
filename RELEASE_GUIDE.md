@@ -127,11 +127,9 @@ Your install lives at `Y:\Movies & Dramas\Movies\Movie Selector\`.
 everything below for you, and refuses rather than half-finishes. The rest of this section is for
 upgrading a build too old to have that button, or for pushing a local build you have not released.
 
-**The easy way, from the repository:** double-click **`COPY TO NETWORK.bat`** in the repository root. It copies the two
-files, refuses to run if MCS is still open or the Y: drive is unreachable, and never touches your
-`Database\`, `Posters\` or `Log\` folders.
-
-By hand:
+**By hand**, which is also what a local `COPY TO NETWORK.bat` automates if you keep one. That
+script is deliberately not in the repository — it hard-codes one particular network share, so it
+is git-ignored and lives only on the machine that uses it:
 
 1. Close MCS if it is running.
 2. Copy **exactly these two files** from `MovieSelector\bin\Release\` into that folder, overwriting:
@@ -234,7 +232,7 @@ Go to the release on GitHub → **Delete**. Then delete the tag with the command
 # build            : Visual Studio -> Release -> Build -> Rebuild Solution
 # output           : MovieSelector\bin\Release\
 # ship             : MCS.exe + Newtonsoft.Json.dll        (always both, never one alone)
-# deploy to Y:      : double-click "COPY TO NETWORK.bat"
+# deploy by hand   : copy MCS.exe + Newtonsoft.Json.dll only, never the folder
 # version file     : MovieSelector\Properties\AssemblyInfo.cs   (both Version lines)
 # publish          : git tag v<version> && git push origin v<version>
 # your OMDb key    : Database\Gui_Options.xml, in the install folder

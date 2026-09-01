@@ -35,3 +35,7 @@ Log/
 *.mpeg
 *.webm
 *.iso
+
+# Personal deployment script - points at one specific network share, so it is kept
+# locally rather than shipped to everyone who clones this.
+COPY TO NETWORK.bat
