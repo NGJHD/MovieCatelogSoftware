@@ -70,6 +70,45 @@ The release workflow packages exactly the two files above, so if you use Part 4 
 
 ---
 
+## Part 2a — What the in-app updater depends on
+
+Since v4.2.0, **Options → Software Update → CHECK FOR UPDATE** installs new versions by itself.
+It reads `https://api.github.com/repos/NGJHD/MovieCatelogSoftware/releases/latest`, compares the
+tag against the version compiled into the running exe, and if it is newer downloads the attached
+zip, quits, replaces both files and restarts.
+
+Three things in Part 4 are what make that work. Break any of them and the button stops finding
+updates, though it will never install something wrong:
+
+| Requirement | Why |
+|---|---|
+| The repository is **public** | The check is an anonymous API call. A private repository answers 404, which the app reports as "No release has been published yet." |
+| The tag is `v` + the version | The tag is where the app reads the new version number from. `v4.1.6` and `4.1.6` both parse; `release-4.1.6` does not. |
+| A **`.zip`** is attached, holding `MCS.exe` and `Newtonsoft.Json.dll` | The updater takes the first `.zip` on the release and refuses it if either file is missing. |
+
+It also re-checks the downloaded `MCS.exe` against the tag, exactly as the workflow does, and
+throws the download away if they disagree. A hand-uploaded asset that skipped the workflow
+cannot get past it.
+
+**The replacement itself, if you ever need to debug it:** the running exe cannot overwrite itself
+or release `Newtonsoft.Json.dll` while loaded, so MCS writes a small `.cmd` into `%TEMP%`, starts
+it, and quits. That script waits for the process to exit, copies **`Newtonsoft.Json.dll` first**
+and `MCS.exe` second — that order means a failure leaves the old, working pair in place rather
+than a new exe bound to an old DLL — then restarts the app. Every step is logged to
+`Log\MCS_update.log` in the install folder.
+
+> **The updater never touches `Database\`, `Posters\` or `Log\`.** It copies exactly two files
+> by name. This is the same rule as Part 3, enforced in code rather than by remembering it.
+
+Two consequences worth knowing:
+
+- **A version with no update button cannot update itself.** v4.1.5 and earlier have to be
+  upgraded by hand (Part 3) once. From the first build that has the button, it works.
+- **If the install folder is read-only** — under `Program Files`, or a share mounted read-only —
+  the app says so and changes nothing, before downloading anything.
+
+---
+
 ## Part 3 — Updating your own installation
 
 Your install lives at `Y:\Movies & Dramas\Movies\Movie Selector\`.
@@ -84,7 +123,11 @@ Your install lives at `Y:\Movies & Dramas\Movies\Movie Selector\`.
 >
 > **Copy the three files individually. Never the folder.**
 
-**The easy way:** double-click **`COPY TO NETWORK.bat`** in the repository root. It copies the two
+**The easy way, from the app:** Options → Software Update → **CHECK FOR UPDATE**. It does
+everything below for you, and refuses rather than half-finishes. The rest of this section is for
+upgrading a build too old to have that button, or for pushing a local build you have not released.
+
+**The easy way, from the repository:** double-click **`COPY TO NETWORK.bat`** in the repository root. It copies the two
 files, refuses to run if MCS is still open or the Y: drive is unreachable, and never touches your
 `Database\`, `Posters\` or `Log\` folders.
 
@@ -195,4 +238,6 @@ Go to the release on GitHub → **Delete**. Then delete the tag with the command
 # version file     : MovieSelector\Properties\AssemblyInfo.cs   (both Version lines)
 # publish          : git tag v<version> && git push origin v<version>
 # your OMDb key    : Database\Gui_Options.xml, in the install folder
+# in-app update    : Options -> Software Update -> CHECK FOR UPDATE   (needs a public repo)
+# update log       : Log\MCS_update.log, in the install folder
 ```

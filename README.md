@@ -43,6 +43,19 @@ back to the shared key.
 If OMDb refuses a request — a spent quota or a bad key — the app now says so in the notification
 area instead of just reporting every movie as failed.
 
+### Keeping it up to date
+
+**Options → Software Update → CHECK FOR UPDATE** asks GitHub what the newest published release
+is. If it is newer than the running build, MCS offers to install it: it downloads the release
+zip, closes, replaces `MCS.exe` and `Newtonsoft.Json.dll` together, and starts itself again.
+
+Nothing under `Database\`, `Posters\` or `Log\` is touched, so your catalogue, posters and OMDb
+key survive the upgrade. If either file cannot be replaced the update is abandoned with the old
+version left intact, and what happened is written to `Log\MCS_update.log`.
+
+The check only ever runs when you press the button — MCS does not phone home on startup. The
+repository must be public for it to work, since the check is an anonymous GitHub API call.
+
 ### Point it at your movies
 
 In **Options**, use the **+** button to add each folder holding your movie files. The app scans them, matches each file name against IMDB, and fills in the details. Names like `Inception (2010).mkv` or `Inception.2010.mkv` match best — a year in brackets is what the matcher trusts most.

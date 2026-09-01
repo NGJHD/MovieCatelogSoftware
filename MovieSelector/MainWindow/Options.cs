@@ -10,10 +10,10 @@ namespace MovieSelector
 /*************************************************************************************************************************************/
         private static Duration optionsAnimationDuration = new Duration(TimeSpan.FromMilliseconds(250));
         private System.Windows.Media.Animation.DoubleAnimation showOptionsGridBGAnimation = new System.Windows.Media.Animation.DoubleAnimation(0, 0.7, optionsAnimationDuration);
-        private System.Windows.Media.Animation.DoubleAnimation showOptionsGridAnimation = new System.Windows.Media.Animation.DoubleAnimation(-600, 0, optionsAnimationDuration);
+        private System.Windows.Media.Animation.DoubleAnimation showOptionsGridAnimation = new System.Windows.Media.Animation.DoubleAnimation(-680, 0, optionsAnimationDuration);
 
         private System.Windows.Media.Animation.DoubleAnimation hideOptionsGridBGAnimation = new System.Windows.Media.Animation.DoubleAnimation(0, optionsAnimationDuration);
-        private System.Windows.Media.Animation.DoubleAnimation hideOptionsGridAnimation = new System.Windows.Media.Animation.DoubleAnimation(-600, optionsAnimationDuration);
+        private System.Windows.Media.Animation.DoubleAnimation hideOptionsGridAnimation = new System.Windows.Media.Animation.DoubleAnimation(-680, optionsAnimationDuration);
 /*************************************************************************************************************************************/
         private void optionBtn_Click(object sender, EventArgs e)
         {
@@ -62,6 +62,8 @@ namespace MovieSelector
         {
             try
             {
+                initUpdateStatus();
+
                 optionsGridBG.Visibility = System.Windows.Visibility.Visible;
                 optionsGridBG.BeginAnimation(Grid.OpacityProperty, showOptionsGridBGAnimation);
 

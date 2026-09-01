@@ -55,6 +55,8 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -115,6 +117,8 @@
     <Compile Include="MainWindow\Config Files.cs" />
     <Compile Include="MainWindow\ListBox.cs" />
     <Compile Include="MainWindow\Options.cs" />
+    <Compile Include="MainWindow\Update.cs" />
+    <Compile Include="Utilities\Updater.cs" />
     <Compile Include="MainWindow\Searchbar.cs" />
     <Compile Include="MainWindow\Scrapper.cs" />
     <Compile Include="User Controls\NotificationUserControl.xaml.cs">

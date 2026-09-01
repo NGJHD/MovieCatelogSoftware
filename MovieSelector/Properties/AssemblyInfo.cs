@@ -54,5 +54,5 @@ using System.Windows;
 //
 // THIS IS THE ONLY PLACE THE APPLICATION VERSION IS DEFINED.
 // Bump both lines together, then tag the release v<version> to publish it.
-[assembly: AssemblyVersion("4.1.5.0")]
-[assembly: AssemblyFileVersion("4.1.5.0")]
+[assembly: AssemblyVersion("4.2.0.0")]
+[assembly: AssemblyFileVersion("4.2.0.0")]

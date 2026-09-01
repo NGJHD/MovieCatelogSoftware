@@ -627,7 +627,7 @@
 
                 <!--  Options Grid  -->
                 <Grid Name="optionsGrid"
-                      Height="700"
+                      Height="780"
                       VerticalAlignment="Top"
                       Background="#3c4755"
                       Visibility="Hidden">
@@ -635,6 +635,8 @@
                         <TranslateTransform x:Name="optionsGridTranslate" />
                     </Grid.RenderTransform>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -929,8 +931,45 @@
 
                     <Border Grid.Row="8" Style="{StaticResource SeperatorBorderStyle}" />
 
-                    <!--  Notification Center  -->
+                    <!--  Software Update  -->
                     <Grid Grid.Row="9"
+                          Margin="24,12,24,12"
+                          HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock FontSize="28"
+                                       Foreground="White"
+                                       Text="Software Update" />
+                            <TextBlock Name="updateStatusTB"
+                                       FontSize="16"
+                                       Foreground="White"
+                                       Opacity="0.54" />
+                        </StackPanel>
+
+                        <local:ClickGrid x:Name="checkForUpdateBtn"
+                                         Grid.Column="1"
+                                         Width="280"
+                                         Height="60"
+                                         Background="#303c4a"
+                                         Click="checkForUpdateGrid_Click">
+                            <TextBlock Margin="0,0,0,5"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontSize="24"
+                                       FontWeight="SemiBold"
+                                       Foreground="White"
+                                       Text="CHECK FOR UPDATE" />
+                        </local:ClickGrid>
+                    </Grid>
+
+                    <Border Grid.Row="10" Style="{StaticResource SeperatorBorderStyle}" />
+
+                    <!--  Notification Center  -->
+                    <Grid Grid.Row="11"
                           Margin="24,12,24,12"
                           Background="#171d24">
                         <TextBlock HorizontalAlignment="Center"
@@ -951,7 +990,7 @@
                                  VerticalScrollBarVisibility="Auto" />
                     </Grid>
 
-                    <Border Grid.Row="10"
+                    <Border Grid.Row="12"
                             Margin="24,6,24,24"
                             Style="{StaticResource SeperatorBorderStyle}" />
                 </Grid>
