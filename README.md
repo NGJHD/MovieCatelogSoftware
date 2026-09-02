@@ -40,12 +40,8 @@ A first scan of a large library costs more than one lookup per movie: a name OMD
 directly is resolved through a web search and then verified, which spends several. The shared
 key's 1,000 a day does not go far against a few hundred films.
 
-Your key is stored in `Database\Gui_Options.xml` inside the app's own folder, so it travels with
-the installation and survives version upgrades. Leaving the field empty stores nothing and falls
-back to the shared key.
-
-If OMDb refuses a request — a spent quota or a bad key — the app now says so in the notification
-area instead of just reporting every movie as failed.
+If OMDb refuses a request — a spent quota or a bad key — the app says so in the notification
+area.
 
 ### Keeping it up to date
 
@@ -53,12 +49,7 @@ area instead of just reporting every movie as failed.
 is. If it is newer than the running build, MCS offers to install it: it downloads the release
 zip, closes, replaces `MCS.exe` and `Newtonsoft.Json.dll` together, and starts itself again.
 
-Nothing under `Database\`, `Posters\` or `Log\` is touched, so your catalogue, posters and OMDb
-key survive the upgrade. If either file cannot be replaced the update is abandoned with the old
-version left intact, and what happened is written to `Log\MCS_update.log`.
-
-The check only ever runs when you press the button — MCS does not phone home on startup. The
-repository must be public for it to work, since the check is an anonymous GitHub API call.
+The check only ever runs when you press the button — MCS does not phone home on startup.
 
 ### Point it at your movies
 
@@ -73,12 +64,6 @@ Inception.2010.mkv
 Inception.2010.1080p.BluRay.x264-SPARKS.mkv
 ```
 
-Without a year the name still works, but a film that shares its title with another is far more
-likely to come back wrong.
-
-A sequel numbered the way IMDB does not — `John Wick 3`, `Frozen 2`, `Mission Impossible 6` — is
-matched through a web search rather than directly, so it takes a little longer.
-
 **For a film named in another script, keep an English title in brackets:**
 
 ```
@@ -87,6 +72,8 @@ matched through a web search rather than directly, so it takes a little longer.
 
 Neither OMDb nor the search engines find anything from the original script alone, so a folder
 named only in Chinese, Japanese or Korean cannot be matched.
+
+# For Developers
 
 ## Building from source
 
